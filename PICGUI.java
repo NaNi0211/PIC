@@ -20,6 +20,8 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 public class PICGUI extends JFrame {
 
@@ -159,19 +161,22 @@ public class PICGUI extends JFrame {
         panel.add(scrollPane_1);
 
         JScrollPane scrollPane_2 = new JScrollPane();
-        scrollPane_2.setBounds(30, 41, 576, 416);
+        scrollPane_2.setBounds(39, 41, 576, 416);
         panel.add(scrollPane_2);
 
         table_1 = new JTable();
-        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "", "", "", "", "", "", "" }) {
-            Class[] columnTypes = new Class[] { String.class, String.class, String.class, String.class, String.class,
-                    String.class, String.class };
+        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "PC", "LST" }) {
+            Class[] columnTypes = new Class[] { String.class, String.class, String.class };
 
             public Class getColumnClass(int columnIndex) {
                 return columnTypes[columnIndex];
             }
         });
         scrollPane_2.setViewportView(table_1);
+
+        TableColumnModel colmod = table_1.getColumnModel();
+        TableColumn TC_lst = colmod.getColumn(2);
+        TC_lst.setPreferredWidth(800);
 
         JLabel lblNewLabel_4 = new JLabel("W:");
         lblNewLabel_4.setBounds(629, 41, 36, 14);
