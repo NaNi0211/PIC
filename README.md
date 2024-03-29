@@ -7,7 +7,7 @@ https://github.com/Marsetex/pic16f84-simulator/blob/main/src/main/java/de/marset
 Wie Soll die Range für Slider sein?
 
 Jedes 4 Mega Hz = 1 mmico secunde 
-
+Beii 1 MHz benötigt Befehl 4 psek
 Laufzeit bei jedem befehl um 1 erhöhen ausser bei call und goto
 
 ### FRONTEND
