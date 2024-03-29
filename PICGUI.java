@@ -22,6 +22,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.JTextField;
+import java.awt.Font;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 
 public class PICGUI extends JFrame {
 
@@ -30,6 +35,11 @@ public class PICGUI extends JFrame {
     private JTable table;
     private JTable table_1;
     private JTable table_2;
+    /**
+     * @wbp.nonvisual location=-249,529
+     */
+    private final JLabel label = new JLabel("New label");
+    private JTextField tf_slider;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -108,7 +118,7 @@ public class PICGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
             }
         });
-        btnRun.setBounds(79, 61, 89, 23);
+        btnRun.setBounds(74, 61, 89, 23);
         contentPane.add(btnRun);
 
         JButton btnStop = new JButton("Stop");
@@ -122,14 +132,44 @@ public class PICGUI extends JFrame {
         JButton btnReset = new JButton("Reset");
         btnReset.setBounds(467, 61, 89, 23);
         contentPane.add(btnReset);
+        
+        
+        //Lable has to be above mouse event otherwise it doesn't know the variable
+        JLabel lbl_slider = new JLabel("0");
+        lbl_slider.setBounds(837, 65, 80, 14);
+        contentPane.add(lbl_slider);
 
-        JSlider slider = new JSlider();
+
+        //https://www.youtube.com/watch?v=LvLFekjVJA8
+        //slider min, max, steps
+        JSlider slider = new JSlider(0,100, 10);
+        slider.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //gets the value from out Slider as the mouse is being clicked
+                long num3;
+                num3 = slider.getValue();
+                
+                lbl_slider.setText(Long.toString(num3));
+            }
+        });
+        slider.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                //increases/decreases value as mouse is dragged
+                long num2;
+                num2 = slider.getValue();
+                lbl_slider.setText(Long.toString(num2));
+            }
+        });
         slider.setBounds(609, 61, 174, 26);
         contentPane.add(slider);
+        
+        
+        
+        
+        
 
-        JLabel lblNewLabel = new JLabel("New label");
-        lblNewLabel.setBounds(837, 65, 100, 14);
-        contentPane.add(lblNewLabel);
 
         JLabel lblNewLabel_1 = new JLabel("Hz");
         lblNewLabel_1.setBounds(947, 65, 46, 14);
@@ -265,6 +305,29 @@ public class PICGUI extends JFrame {
 
         JPanel panel_io = new JPanel();
         tabbedPane_1.addTab("I/O-Pins", null, panel_io, null);
+        
+        //TF für Slider
+        /*
+        tf_slider = new JTextField();
+        tf_slider.setFont(new Font("Tahoma", Font.BOLD, 11));
+        tf_slider.setBounds(639, 30, 86, 20);
+        contentPane.add(tf_slider);
+        tf_slider.setColumns(10);
+       */
+        
+        /* temporärer btn für Slider
+        JButton btnSlider = new JButton("Slide");
+        btnSlider.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //Gets value of Slider and puts in textfield
+                long num1;
+                num1 = slider.getValue();
+                tf_slider.setText(Long.toString(num1));
+            }
+        });
+        btnSlider.setBounds(735, 27, 89, 23);
+        contentPane.add(btnSlider);
+        */
     }
 
     // input Dateipfad der LST Datei durch den FileBtn in der GUI
