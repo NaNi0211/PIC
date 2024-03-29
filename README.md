@@ -3,6 +3,12 @@
 https://github.com/Marsetex/pic16f84-simulator/blob/main/src/main/java/de/marsetex/pic16f84sim/decoder/InstructionDecoder.java
 </P>
 
+### Fragen
+Wie Soll die Range für Slider sein?
+
+
+
+
 ### FRONTEND
 ### Setup GUI on Eclipse: https://www.youtube.com/watch?v=lctZ-NAWgDU
 
