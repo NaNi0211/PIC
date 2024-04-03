@@ -1,26 +1,26 @@
-<pre>
-Doku 
 
-Im Rahmen des Labor Rechnerarchitektur wurde die Entwicklung eines PIC16F84 Simulators mit der Programmiersprache Java  und dem Framework Java Swing  für die Grafische Oberfläche durchgeführt um ein besseres Verständnis für PIC zu gewinnen sowie die erste Schritte mit Java Swing zu machen.
+<h1>Doku<h1> 
 
+<h2>Einleitung</h2>
 
+<p>Im Rahmen des Labor Rechnerarchitektur wurde die Entwicklung eines PIC16F84 Simulators mit der Programmiersprache Java  und dem Framework Java Swing  für die Grafische Oberfläche durchgeführt um ein besseres Verständnis für PIC zu gewinnen sowie die erste Schritte mit Java Swing zu machen.</p>
+
+<p>
 PIC steht für "Peripheral Interface Controller" und  beschreibt eine Familie von Mikrocontrollern. 
 Das Arbeitsprinzip des Mikrocontrollers kann in Folgenden Schritten unterteilt werden:
+</p>
 
 
-Schritte
+<b>Schritte hinzufügen</b>
 
 
 
-PIC-Mikrocontroller werden in vielen Anwendungen verwendet, die täglich benutzt werden. Darunter zählen unter anderem Haushaltsgeräte, Automobiltechnik und Spielzeug.
-
+<p>PIC-Mikrocontroller werden in vielen Anwendungen verwendet, die täglich benutzt werden. Darunter zählen unter anderem Haushaltsgeräte, Automobiltechnik und Spielzeug.
 Ziel des Projektes war es,  das Verhalten der PIC Hardwarekomponente mithilfe der GUI nachzuahmen. Die Simulation hat zahlreiche Vorteile wie zum Beispiel  Kostenersparnis und Sicherheit aufgrund des nicht reallen Aspekts.
+Man sollte aber ebenfalls bedenken dass eine Simulation nicht perfekt ist, da es zu der physischen Komponenten Abweichungen geben kann, weil sich nicht alles nachbilden lässt wie zum Beispiel das Material das mit der Zeit nach lässt.</p>
 
-Man sollte aber ebenfalls bedenken dass eine Simulation nicht perfekt ist, da es zu der physischen Komponenten Abweichungen geben kann, weil sich nicht alles nachbilden lässt wie zum Beispiel das Material das mit der Zeit nach lässt.
 
-
-Der PIC16F84 hat gegenüber den anderen Modellen der Familie den Vorteil dass er einer älteren Modelle  ist und bietet dadurch eine leichtere Komplexität. Der Befehlssatz ist im Vergleich der anderen PIC Mikrocontroller gut verständlich und bietet sich dementsprechend ideal für das Labor an.
-
+<p>Der PIC16F84 hat gegenüber den anderen Modellen der Familie den Vorteil dass er einer älteren Modelle  ist und bietet dadurch eine leichtere Komplexität. Der Befehlssatz ist im Vergleich der anderen PIC Mikrocontroller gut verständlich und bietet sich dementsprechend ideal für das Labor an.</p>
 
 
 
@@ -30,7 +30,10 @@ Der PIC16F84 hat gegenüber den anderen Modellen der Familie den Vorteil dass er
 
 
 
-Um Den Simulator besser zu verstehen werden hier alle Interaktionsmöglichkeiten mit der GUI beschrieben, sowie die Abläufe die dahinter stecken.
+
+<h2>Anleitung Interaktion mit der GUI</h2>
+
+<p>Um Den Simulator besser zu verstehen werden hier alle Interaktionsmöglichkeiten mit der GUI beschrieben, sowie die Abläufe die dahinter stecken.</p>
 
 Nach dem erfolgreichen einlesen einer LST Datei über den File Button, wird 
 
@@ -73,8 +76,6 @@ Für den
 
 
 
-Anleitung Interaktion mit der GUI
-
 
 
 
@@ -95,4 +96,4 @@ Trotz ausführlicher Planung am Anfang des Projektes, wäre es wichtig gewesen e
 Wäre mehr zeit für das Projekt zur Verfügung gewesen, wären könnte man weitere Funktionalitäten einbauen wie z. B. Funktionalitäten die man hinzufügen könnte und was die machen
  
 
-</pre>
+
