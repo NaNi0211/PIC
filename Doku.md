@@ -44,36 +44,45 @@ Buttons:
 
 
 <h3>Run:</h3> 
-Beschribung
-Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
-Was passiert intern:
+<p>Beschribung</p>
+<p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
+<p>Was passiert intern:</p>
 
 
 <h3>Stop:</h3> 
-Beschribung
-Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
-Was passiert intern:
-
+<p>Beschribung</p>
+<p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
+<p>Was passiert intern:</p>
 
 
 <h3>Step:</h3> 
-Beschribung
-Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
-Was passiert intern:
-
+<p>Beschribung</p>
+<p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
+<p>Was passiert intern:</p>
 
 
 <h3>Reset:</h3> 
-Beschribung
-Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
-Was passiert intern:
-
+<p>Beschribung</p>
+<p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
+<p>Was passiert intern:</p>
 
 
 <h3>Slider:</h3>
-Beschreibung: Mit dem Slider kann man die Laufzeit abändern
+<p>Beschribung</p>
+<p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
+<p>Was passiert intern:</p>
 
 
+<h3>IO-Pins:</h3>
+<p>Beschribung</p>
+<p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
+<p>Was passiert intern:</p>
+
+
+<h3>Breakpoints:</h3>
+<p>Beschribung</p>
+<p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
+<p>Was passiert intern:</p>
 
 
 
