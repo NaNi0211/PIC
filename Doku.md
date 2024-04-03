@@ -11,7 +11,7 @@ Das Arbeitsprinzip des Mikrocontrollers kann in Folgenden Schritten unterteilt w
 </p>
 
 
-<b>Schritte hinzufügen</b>
+<b style="color:red">Schritte hinzufügen</b>
 
 
 
