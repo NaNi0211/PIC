@@ -30,8 +30,28 @@ Der PIC16F84 hat gegenüber den anderen Modellen der Familie den Vorteil dass er
 
 
 
+Um Den Simulator besser zu verstehen werden hier alle Interaktionsmöglichkeiten mit der GUI beschrieben, sowie die Abläufe die dahinter stecken.
 
-Die Oberfläche ist so aufgebaut 
+Nach dem erfolgreichen einlesen einer LST Datei über den File Button, wird 
+
+Buttons:
+
+
+
+Run: 
+Beschribung
+Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
+Was passiert intern:
+
+Slider: Mit dem Slider kann man die Laufzeit abändern
+
+
+
+
+
+<h2>Struktur des Projektes<h2>
+
+
 
 
 
