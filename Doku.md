@@ -37,16 +37,41 @@ Man sollte aber ebenfalls bedenken dass eine Simulation nicht perfekt ist, da es
 
 Nach dem erfolgreichen einlesen einer LST Datei über den File Button, wird 
 
+
+
 Buttons:
 
 
 
-Run: 
+<h3>Run:</h3> 
 Beschribung
 Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
 Was passiert intern:
 
-Slider: Mit dem Slider kann man die Laufzeit abändern
+
+<h3>Stop:</h3> 
+Beschribung
+Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
+Was passiert intern:
+
+
+
+<h3>Step:</h3> 
+Beschribung
+Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
+Was passiert intern:
+
+
+
+<h3>Reset:</h3> 
+Beschribung
+Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird 
+Was passiert intern:
+
+
+
+<h3>Slider:</h3>
+Beschreibung: Mit dem Slider kann man die Laufzeit abändern
 
 
 
@@ -54,17 +79,17 @@ Slider: Mit dem Slider kann man die Laufzeit abändern
 
 <h2>Struktur des Projektes<h2>
 
+<b>Struktur</b>
 
 
 
 
 
-
-Am Anfang 
+<p>Am Anfang 
 Bevor mit der Implementierung angefangen wurde, war eine umfassende Planung notwending, um sicherzustellen, dass alle Anforderungen erfüllt werden und das Projekt so effizient wie möglich abläuft. 
 Die Planung umfasste folgende Schritte:
 Erstellen eines Wireframes für die GUI. Einfachheitshalber wurde entschieden die GUI aus dem "GUI-Themenblatt" nachzubauen um sicherzustellen das alle wichtigen Anforderungen erfüllt werden. Im Laufe des Projektes würde die GUI nochmal umgestaltet um den Punkt "Hardwareansteuerung" zu erfüllen.
-Assember....
+Assember....</p>
 
 
 Bei dem GUI Setup 
@@ -81,17 +106,20 @@ Für den
 
 
 
-Fazit 
-Die Implementierung des PIC16F84 Simulators war eine umfangreiche, aber lehrreiche Aufgabe um zu verstehen wie der Mikrocontroller tatsächlich funktioniert und ein tieferes Verständnis für Java zu gewinnen.
-
-Neben diesen technischen Fähigkeiten wurde ebenfalls die Wichtigkeit des Software Engineerings bedeutsam geworden ins besondere die Strukturierung des Projektes und Zusammenarbeit im Team. Ein Beispiel Für die  wäre es gut im voraus die Struktur zu planen schon von Anfang an anstatt mitten im Projekt zu realisieren dass man die Übersicht verloren hat und es erst dann zu strukturieren. Außerdem vermeidet man ebenfalls die Fehler die bei der Umstrukturierung entstehen. 
+<h2>Fazit</h2> 
+<p>Die Implementierung des PIC16F84 Simulators war eine umfangreiche, aber lehrreiche Aufgabe um zu verstehen wie der Mikrocontroller tatsächlich funktioniert und ein tieferes Verständnis für Java zu gewinnen.</p>
+<p>
+ Neben diesen technischen Fähigkeiten wurde ebenfalls die Wichtigkeit des Software Engineerings bedeutsam geworden ins besondere die Strukturierung des Projektes und Zusammenarbeit im Team. Ein Beispiel Für die  wäre es gut im voraus die Struktur zu planen schon von Anfang an anstatt mitten im Projekt zu realisieren dass man die Übersicht verloren hat und es erst dann zu strukturieren. Außerdem vermeidet man ebenfalls die Fehler die bei der Umstrukturierung entstehen. 
 
 und Zusammenarbeit im Team um möglichst effektiv das Projekt zu bearbeiten.
 
 Aber auch die Kommunikation zum Beispiel war es wichtig zu wissen wie die andre Person etwas implementiert hat damit das Frontend und backend gut kombiniert
+</p>
 
-Was schief gelaufen ist 
-Trotz ausführlicher Planung am Anfang des Projektes, wäre es wichtig gewesen ebenfalls die Architektur des ganzen zu planen damit man im Laufe des Projektes nicht den Pfaden verliert. Beim nächsten Mal sollten ebenfalls die Design Patterns direkt am Anfang berücksichtigt werden.
 
-Wäre mehr zeit für das Projekt zur Verfügung gewesen, wären könnte man weitere Funktionalitäten einbauen wie z. B. Funktionalitäten die man hinzufügen könnte und was die machen
+<h3>Was schief gelaufen ist</h3> 
+<p>Trotz ausführlicher Planung am Anfang des Projektes, wäre es wichtig gewesen ebenfalls die Architektur des ganzen zu planen damit man im Laufe des Projektes nicht den Pfaden verliert. Beim nächsten Mal sollten ebenfalls die Design Patterns direkt am Anfang berücksichtigt werden.</p>
+
+<h3>Was man am Projekkt noch verbessern kann</h3> 
+<p>Wäre mehr zeit für das Projekt zur Verfügung gewesen, wären könnte man weitere Funktionalitäten einbauen wie z. B. Funktionalitäten die man hinzufügen könnte und was die machen</p>
  
