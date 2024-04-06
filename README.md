@@ -11,6 +11,7 @@ Hardwareansteuerung?
 Jedes 4 Mega Hz = 1 mmico secunde <br/>
 Bei 1 MHz benötigt Befehl 4 psek<br/>
 Laufzeit bei jedem befehl um 1 erhöhen ausser bei call und goto
+[NIDI SUPPORT: nein, ist abhängik von ANzahl der Ausgeführten Befehle UND Quarzfrequenz (bei 4MHz ist Laufzeit = 1ms Pro Befehlszyklus ) ab hier Dreisatz (je höcher die Frequenz desto kleiner die Laufzeit)] 
 
 ### FRONTEND
 ### Setup GUI on Eclipse: https://www.youtube.com/watch?v=lctZ-NAWgDU
@@ -19,13 +20,15 @@ GPR WIE 1.2 Die Registerstruktur des PICs zUSÄTZLICH NOCH SPALTE bEZEICHNUNGEN<
 lINKS NEBEN DRAN W; PC; PCL ETC KONSTANT ´ + ANDEREN FLAGS UND NUR FLAGS IN EINER SECTION: ZAHLEN WERDEN VOM AKTUELLEN ZUSTAND ENTNOMMEN <br/>
 WAS IST PICO SEKUNDEN<br/>
 HERZ NORMAL QUARZFREQUENZ<br/>
-sTACK: ZIELEN: NUMMER; PROGRAMMZÄHLER MAX 8 ZEILEN<br/>
+Stack: Zeile des AKtuellen Programmcodes, und bis zu 7/8 return adressen (Achtung ProgrammCounter ist die adresse des Nächsten Codes)<br/>
 SFR: GRUNDLAGEN ZUR PIC PROGRAMMIERUNG UND EINFACHE CODESEQUENZ TABELLE AUF SEITE 5<br/>
 IO PINS WIE KLEINE TABELLE BEI PROGRAMM ABER UM 90 GRAD DREHEN<br/>
 CONSOLE; SIMULATOR STATE ?<br/>
 
 <I>PROGRAMMZÄHLER : ZEIGT AUF AKTUELLES ODER NÄCHSTES BEFEHL? WIE IMPLEMENTIEREN WENN NÄCHSTES?</I><br/>
+[NIDI SUPPORT: einfach PC++ wird auch im PIC so realisiert (wenn es ein Springbefehl ist dann wird im ersten zyklus der ProgrammCounter geändert und im zweiten erst dahingesprungen) [MACHT DAS NICHT SO SONDERN AUF DIE EINFACHE ART UND WEISE] aber deshalb dauern Sprungbefehle auch im gegensatz zu normalen befehlen immer 2 zyklen] 
 <I>BANKEN IMPLEMENTIERN: NUR 2 ODER ALLE BANKEN</I><br/>
+[NIDI SUPPORT:Nur 2]
 ## Backend
 ### Befehle 
 - MOVLW, ADDLW, SUBLW ( einfachen Literalbefehle)
