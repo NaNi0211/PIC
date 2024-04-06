@@ -10,8 +10,8 @@ Hardwareansteuerung?
 
 Jedes 4 Mega Hz = 1 mmico secunde <br/>
 Bei 1 MHz benötigt Befehl 4 psek<br/>
-Laufzeit bei jedem befehl um 1 erhöhen ausser bei call und goto
-[NIDI SUPPORT: nein, ist abhängik von ANzahl der Ausgeführten Befehle UND Quarzfrequenz (bei 4MHz ist Laufzeit = 1ms Pro Befehlszyklus ) ab hier Dreisatz (je höcher die Frequenz desto kleiner die Laufzeit)] 
+Laufzeit bei jedem befehl um 1 erhöhen ausser bei call und goto<br/>
+[NIDI SUPPORT: nein, ist abhängik von ANzahl der Ausgeführten Befehle UND Quarzfrequenz (bei 4MHz ist Laufzeit = 1ms Pro Befehlszyklus ) ab hier Dreisatz (je höcher die Frequenz desto kleiner die Laufzeit)] <br/>
 
 ### FRONTEND
 ### Setup GUI on Eclipse: https://www.youtube.com/watch?v=lctZ-NAWgDU
@@ -26,9 +26,9 @@ IO PINS WIE KLEINE TABELLE BEI PROGRAMM ABER UM 90 GRAD DREHEN<br/>
 CONSOLE; SIMULATOR STATE ?<br/>
 
 <I>PROGRAMMZÄHLER : ZEIGT AUF AKTUELLES ODER NÄCHSTES BEFEHL? WIE IMPLEMENTIEREN WENN NÄCHSTES?</I><br/>
-[NIDI SUPPORT: einfach PC++ wird auch im PIC so realisiert (wenn es ein Springbefehl ist dann wird im ersten zyklus der ProgrammCounter geändert und im zweiten erst dahingesprungen) [MACHT DAS NICHT SO SONDERN AUF DIE EINFACHE ART UND WEISE] aber deshalb dauern Sprungbefehle auch im gegensatz zu normalen befehlen immer 2 zyklen] 
+[NIDI SUPPORT: einfach PC++ wird auch im PIC so realisiert (wenn es ein Springbefehl ist dann wird im ersten zyklus der ProgrammCounter geändert und im zweiten erst dahingesprungen) [MACHT DAS NICHT SO SONDERN AUF DIE EINFACHE ART UND WEISE] aber deshalb dauern <br/>Sprungbefehle auch im gegensatz zu normalen befehlen immer 2 zyklen] 
 <I>BANKEN IMPLEMENTIERN: NUR 2 ODER ALLE BANKEN</I><br/>
-[NIDI SUPPORT:Nur 2]
+[NIDI SUPPORT:Nur 2]<br/>
 ## Backend
 ### Befehle 
 - MOVLW, ADDLW, SUBLW ( einfachen Literalbefehle)
