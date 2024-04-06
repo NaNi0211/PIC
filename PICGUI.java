@@ -2,6 +2,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,13 +29,14 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 
-public class PICGUI extends JFrame {
+public class PIC extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTable table;
     private JTable table_1;
     private JTable table_2;
+    ArrayList<String> extracted = new ArrayList<String>();
     /*
      * Eventuelle umstrukturierung notwending. Components global deklarieren und
      * erst in der GUI Klasse initialisieren ansonsten kann man auf die Components
@@ -55,7 +57,7 @@ public class PICGUI extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    PICGUI frame = new PICGUI();
+                    PIC frame = new PIC();
                     // Test t1 = new Test();
                     // t1.digit();
                     // frame.console_area.append(Integer.toString(t1.digit()));
@@ -71,7 +73,7 @@ public class PICGUI extends JFrame {
         });
     }
 
-    public PICGUI() {
+    public PIC() {
 
         setResizable(false);
         setTitle("PIC16F84 Simulator");
@@ -129,10 +131,21 @@ public class PICGUI extends JFrame {
             }
         });
         toolBar.add(btnHelp);
-
+        /*
+        
+DecodeDraft backend = new DecodeDraft();
+*/
         JButton btnRun = new JButton("Run");
         btnRun.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                /*
+               do {
+                    
+                
+                int a= Integer.parseInt(extracted.get(backend.getpC()));
+                backend.literalbefehl(a);
+                }while(backend.getpC()!=6);
+                */
             }
         });
         btnRun.setBounds(74, 61, 89, 23);
@@ -396,6 +409,9 @@ public class PICGUI extends JFrame {
          */
     }
 
+    
+    
+    
     // input Dateipfad der LST Datei durch den FileBtn in der GUI
     private void displayDataInTable(String filePath) {
         readDataFromFile(filePath);
@@ -429,6 +445,11 @@ public class PICGUI extends JFrame {
         }
         return data;
     }
+    
+    //Input: in
+    public void execute() {
+        
+    }
 
     public List<String> parse(String lstFile) {
         List<String> codeLines = new ArrayList<>();
@@ -448,7 +469,45 @@ public class PICGUI extends JFrame {
 
         return codeLines;
     }
+    
 
+    
+    public  void befehleExtrahieren() {
+        try {
+          
+            //ArrayList<String> optional = new ArrayList<String>();
+
+            String line;
+            String befehlcode; // vorläufiger Variablenname
+            String optionalStr; // vorläufiger Variablenname
+
+            BufferedReader reader = new BufferedReader(
+                   new FileReader("h:\\downloads\\TestProg_PicSim_20230413\\TPicSim1.lst"));
+            // System.out.println(reader);
+
+            try {
+                while ((line = reader.readLine()) != null) {
+                    // System.out.println(line);
+                    optionalStr = line.substring(0, 4);
+                    befehlcode = line.substring(5, 9);
+                    System.out.println("Optional " + optionalStr);
+                    System.out.println("Befehlscode " + befehlcode);
+                    //optional.add(optionalStr);
+                    extracted.add(befehlcode);
+
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
+    
+    //Wandelt Befehl zu einem Integer
     public static int convertHexToInt(String hex) {
         int x = Integer.parseInt(hex, 16);
 
