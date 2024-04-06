@@ -41,12 +41,15 @@ Nach dem erfolgreichen einlesen einer LST Datei über den File Button, wird
 
 Buttons:
 
-
+<h3>File:</h3> 
+<p>Beschribung</p>
+<p>Was passiert auf der GUI: Öffnet Explorer wo man eine LST Datei auswählen muss. Bei dem Erfolgreichen einlesen der LST Datei erscheint eine Erfolgsmeldung in der Konsole und eine Fehlermeldung falls das einlesen nicht erfolgreich war</p> 
+<p>Was passiert intern: Intern wird nach dem erfolgreichen einlesen die Methoden displayToTable()</p>
 
 <h3>Run:</h3> 
-<p>Beschribung</p>
-<p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
-<p>Was passiert intern:</p>
+<p>Beschribung: Soll Programm durchlaufen</p>
+<p>Was passiert auf der GUI: Wenn der Button gedrückt wird, soll Programm bis zum letzten Befehl durchelaufen und die Abhängigne Werte sollen nach jedem Befehl verändert werden</p> 
+<p>Was passiert intern: Es soll mit einer For Schleife die Länge des Arrays durchgehen und alle Befehle executen</p>
 
 
 <h3>Stop:</h3> 
