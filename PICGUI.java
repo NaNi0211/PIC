@@ -56,6 +56,7 @@ public class PICGUI extends JFrame {
             public void run() {
                 try {
                     PICGUI frame = new PICGUI();
+
                     // Test t1 = new Test();
                     // t1.digit();
                     // frame.console_area.append(Integer.toString(t1.digit()));
@@ -138,36 +139,6 @@ public class PICGUI extends JFrame {
             }
         });
         toolBar.add(btnHelp);
-        /*
-         * 
-         * DecodeDraft backend = new DecodeDraft();
-         */
-        JButton btnRun = new JButton("Run");
-        btnRun.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                /*
-                 * do {
-                 * 
-                 * 
-                 * int a= Integer.parseInt(extracted.get(backend.getpC()));
-                 * backend.literalbefehl(a); }while(backend.getpC()!=6);
-                 */
-            }
-        });
-        btnRun.setBounds(74, 61, 89, 23);
-        contentPane.add(btnRun);
-
-        JButton btnStop = new JButton("Stop");
-        btnStop.setBounds(205, 61, 89, 23);
-        contentPane.add(btnStop);
-
-        JButton btnStep = new JButton("Step");
-        btnStep.setBounds(340, 61, 89, 23);
-        contentPane.add(btnStep);
-
-        JButton btnReset = new JButton("Reset");
-        btnReset.setBounds(467, 61, 89, 23);
-        contentPane.add(btnReset);
 
         // Lable has to be above mouse event otherwise it doesn't know the variable
         JLabel lbl_slider = new JLabel("0");
@@ -391,16 +362,6 @@ public class PICGUI extends JFrame {
                 new String[] { "RA", "Tris", "Pin", "RB", "Tris", "Pin" }));
         scrollPane_4.setViewportView(io_table);
 
-        JButton btnNewButton = new JButton("New button");
-        btnNewButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                DefaultTableModel model = (DefaultTableModel) table_1.getModel();
-                model.addRow(new Object[] { "gfdsfgdfg", "gfdsfgdfg", "gfdsfgdfg" });
-            }
-        });
-        btnNewButton.setBounds(164, 468, 89, 23);
-        panel.add(btnNewButton);
-
         JLabel lblNewLabel_12 = new JLabel("Quartzfrequenz");
         lblNewLabel_12.setBounds(870, 45, 89, 14);
         contentPane.add(lblNewLabel_12);
@@ -408,6 +369,62 @@ public class PICGUI extends JFrame {
         JLabel lblNewLabel_13 = new JLabel("Laufzeit");
         lblNewLabel_13.setBounds(1111, 45, 46, 14);
         contentPane.add(lblNewLabel_13);
+
+        // Buttons müssen unterhalb Labels ansonsten werden die nicht erkennt wenn die
+        // erst unterhalb deklariert werden
+        /*
+         * 
+         * DecodeDraft backend = new DecodeDraft();
+         */
+        JButton btnRun = new JButton("Run");
+        btnRun.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                DecodeDraft decoder = new DecodeDraft();
+
+                lbw.setText(String.valueOf(decoder.getwRegister()));
+                lbpc.setText(String.valueOf(decoder.getpC()));
+                lbpcl.setText(String.valueOf(decoder.getpCL()));
+                // lbpclath.setText(String.valueOf(decoder.getZerobit()));
+
+                lbc.setText(String.valueOf(decoder.getCarrybit()));
+                lbdc.setText(String.valueOf(decoder.getDigitcarrybit()));
+                lbz.setText(String.valueOf(decoder.getZerobit()));
+
+                // WErte im Stack Speichern
+                stack_table.setValueAt(String.valueOf(decoder.getStack()[0]), 0, 1);
+                stack_table.setValueAt(String.valueOf(decoder.getStack()[1]), 1, 1);
+                stack_table.setValueAt(String.valueOf(decoder.getStack()[2]), 2, 1);
+                stack_table.setValueAt(String.valueOf(decoder.getStack()[3]), 3, 1);
+                stack_table.setValueAt(String.valueOf(decoder.getStack()[4]), 4, 1);
+                stack_table.setValueAt(String.valueOf(decoder.getStack()[5]), 5, 1);
+                stack_table.setValueAt(String.valueOf(decoder.getStack()[6]), 6, 1);
+                stack_table.setValueAt(String.valueOf(decoder.getStack()[7]), 7, 1);
+
+                // System.out.println(decoder.getStack()[0]); -> 0
+
+                /*
+                 * do {
+                 * 
+                 * 
+                 * int a= Integer.parseInt(extracted.get(backend.getpC()));
+                 * backend.literalbefehl(a); }while(backend.getpC()!=6);
+                 */
+            }
+        });
+        btnRun.setBounds(74, 61, 89, 23);
+        contentPane.add(btnRun);
+
+        JButton btnStop = new JButton("Stop");
+        btnStop.setBounds(205, 61, 89, 23);
+        contentPane.add(btnStop);
+
+        JButton btnStep = new JButton("Step");
+        btnStep.setBounds(340, 61, 89, 23);
+        contentPane.add(btnStep);
+
+        JButton btnReset = new JButton("Reset");
+        btnReset.setBounds(467, 61, 89, 23);
+        contentPane.add(btnReset);
 
         // TF für Slider
         /*
