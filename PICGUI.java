@@ -37,16 +37,11 @@ public class PICGUI extends JFrame {
     private JTable table;
     private JTable table_1;
     private JTable table_2;
+    public JTextArea console_area = new JTextArea();
+    public JTextArea state_area = new JTextArea();
     // ArrayList<String> extracted = new ArrayList<String>(); ersetzt durch befehle
     List<String> befehle = new ArrayList<>();
     static List<Integer> befehleInteger = new ArrayList<>();
-    /*
-     * Eventuelle umstrukturierung notwending. Components global deklarieren und
-     * erst in der GUI Klasse initialisieren ansonsten kann man auf die Components
-     * innerhalb von Methoden zugreiffen. Zum Beispiel könnte man keine console
-     * _area verwenden
-     */
-    private JTextArea console_area;
     /**
      * @wbp.nonvisual location=-249,529
      */
@@ -100,18 +95,23 @@ public class PICGUI extends JFrame {
         tabbedPane.addTab("Simulator State", null, simulator_state_panel, null);
         simulator_state_panel.setLayout(null);
 
-        JTextArea state_area = new JTextArea();
-        state_area.setBounds(10, 0, 1192, 200);
-        simulator_state_panel.add(state_area);
+        JScrollPane scrollPane_7 = new JScrollPane();
+        scrollPane_7.setBounds(10, 11, 1192, 189);
+        simulator_state_panel.add(scrollPane_7);
+
+        // JTextArea state_area = new JTextArea();
+        scrollPane_7.setViewportView(state_area);
 
         JPanel console_panel = new JPanel();
         tabbedPane.addTab("Console", null, console_panel, null);
         console_panel.setLayout(null);
 
+        JScrollPane scrollPane_8 = new JScrollPane();
+        scrollPane_8.setBounds(10, 11, 1192, 189);
+        console_panel.add(scrollPane_8);
+
         // JTextArea console_area = new JTextArea();
-        console_area = new JTextArea();
-        console_area.setBounds(10, 0, 1192, 200);
-        console_panel.add(console_area);
+        scrollPane_8.setViewportView(console_area);
 
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
