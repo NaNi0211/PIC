@@ -1,13 +1,9 @@
 # PIC
-<P>ALTE PROJEKTE VON ANDEREN STUDENTEN:
-https://github.com/Marsetex/pic16f84-simulator/blob/main/src/main/java/de/marsetex/pic16f84sim/decoder/InstructionDecoder.java
-</P>
 
+## TODO GUI
 
-TODO GUI
+ DecodeDraft m = new DecodeDraft();
 
-    DecodeDraft m = new DecodeDraft();
-LST Datei in table hinzufügen  
   
 Werte von Backend in tabellen 
 String indirect= Integer.toHexString( m.getRam(0, 0)); //param 1 Bank 0/1, param 2 Bezeichnungs
