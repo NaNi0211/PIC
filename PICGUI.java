@@ -1,8 +1,11 @@
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,25 +21,25 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.JTextField;
-import java.awt.Font;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
 
-public class PIC extends JFrame {
+//add row https://www.youtube.com/watch?v=eAJphO_PHTU&t=64s
+
+public class PICGUI extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTable table;
     private JTable table_1;
     private JTable table_2;
-    ArrayList<String> extracted = new ArrayList<String>();
+    // ArrayList<String> extracted = new ArrayList<String>(); ersetzt durch befehle
+    List<String> befehle = new ArrayList<>();
+    static List<Integer> befehleInteger = new ArrayList<>();
     /*
      * Eventuelle umstrukturierung notwending. Components global deklarieren und
      * erst in der GUI Klasse initialisieren ansonsten kann man auf die Components
@@ -57,14 +60,18 @@ public class PIC extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    PIC frame = new PIC();
+                    PICGUI frame = new PICGUI();
                     // Test t1 = new Test();
                     // t1.digit();
                     // frame.console_area.append(Integer.toString(t1.digit()));
 
                     // Convert Hex to integer
-                    frame.console_area.append(Integer.toString(convertHexToInt("F")));
-
+                    // frame.console_area.append(Integer.toString(convertHexToInt("F")));
+                    // Append each integer from the list to the JTextArea
+                    /*
+                     * for (Integer intValue : befehleInteger) {
+                     * frame.console_area.append(intValue.toString() + "\n"); }
+                     */
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -73,7 +80,7 @@ public class PIC extends JFrame {
         });
     }
 
-    public PIC() {
+    public PICGUI() {
 
         setResizable(false);
         setTitle("PIC16F84 Simulator");
@@ -132,20 +139,19 @@ public class PIC extends JFrame {
         });
         toolBar.add(btnHelp);
         /*
-        
-DecodeDraft backend = new DecodeDraft();
-*/
+         * 
+         * DecodeDraft backend = new DecodeDraft();
+         */
         JButton btnRun = new JButton("Run");
         btnRun.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 /*
-               do {
-                    
-                
-                int a= Integer.parseInt(extracted.get(backend.getpC()));
-                backend.literalbefehl(a);
-                }while(backend.getpC()!=6);
-                */
+                 * do {
+                 * 
+                 * 
+                 * int a= Integer.parseInt(extracted.get(backend.getpC()));
+                 * backend.literalbefehl(a); }while(backend.getpC()!=6);
+                 */
             }
         });
         btnRun.setBounds(74, 61, 89, 23);
@@ -385,6 +391,16 @@ DecodeDraft backend = new DecodeDraft();
                 new String[] { "RA", "Tris", "Pin", "RB", "Tris", "Pin" }));
         scrollPane_4.setViewportView(io_table);
 
+        JButton btnNewButton = new JButton("New button");
+        btnNewButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) table_1.getModel();
+                model.addRow(new Object[] { "gfdsfgdfg", "gfdsfgdfg", "gfdsfgdfg" });
+            }
+        });
+        btnNewButton.setBounds(164, 468, 89, 23);
+        panel.add(btnNewButton);
+
         JLabel lblNewLabel_12 = new JLabel("Quartzfrequenz");
         lblNewLabel_12.setBounds(870, 45, 89, 14);
         contentPane.add(lblNewLabel_12);
@@ -409,14 +425,11 @@ DecodeDraft backend = new DecodeDraft();
          */
     }
 
-    
-    
-    
     // input Dateipfad der LST Datei durch den FileBtn in der GUI
     private void displayDataInTable(String filePath) {
-        readDataFromFile(filePath);
-        parse(filePath);
-        console_area.append(filePath);
+        // readDataFromFile(filePath);
+        parse(filePath); // displays the lst file in the table and extracts commands
+        console_area.append(filePath);// eingelesene Datei in Console Ausgeben
         System.out.println("Filepath in the display to table method: " + filePath);
 
         // List<String[]> data = readDataFromFile(filePath);
@@ -427,40 +440,43 @@ DecodeDraft backend = new DecodeDraft();
 
     }
 
-    private List<String[]> readDataFromFile(String filePath) {
-        List<String[]> data = new ArrayList<>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
-            String lineStr = br.readLine(); // Read the first line from the file
-            System.out.println("lineStr: " + lineStr); // Print the line read from the file
+    /*
+     * Already covered in parse
+     * 
+     * private List<String[]> readDataFromFile(String filePath) { List<String[]>
+     * data = new ArrayList<>(); try { BufferedReader br = new BufferedReader(new
+     * FileReader(filePath)); String lineStr = br.readLine(); // Read the first line
+     * from the file System.out.println("lineStr: " + lineStr); // Print the line
+     * read from the file
+     * 
+     * // Split the line using a regular expression that matches one or more
+     * whitespace // characters String[] line = lineStr.trim().split("\\s+");
+     * System.out.println("Number of elements in line array: " + line.length);
+     * 
+     * } catch (IOException e) { e.printStackTrace(); // Handle file reading errors
+     * } return data; }
+     */
 
-            // Split the line using a regular expression that matches one or more whitespace
-            // characters
-            String[] line = lineStr.trim().split("\\s+");
-            System.out.println("Number of elements in line array: " + line.length);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle file reading errors
-        }
-        return data;
-    }
-    
-    //Input: in
-    public void execute() {
-        
-    }
-
+    // Displayed die LST Datei in der Tabelle table_1 und extrahiert die Befehle aus
+    // der LST Datei als String
     public List<String> parse(String lstFile) {
         List<String> codeLines = new ArrayList<>();
+        // List<String> befehle = new ArrayList<>();
+        DefaultTableModel model = (DefaultTableModel) table_1.getModel();
 
         try (BufferedReader br = new BufferedReader(new FileReader(lstFile))) {
             String currentLine;
 
             while ((currentLine = br.readLine()) != null) {
                 codeLines.add(currentLine);
+                befehle.add(currentLine.substring(5, 9));
+                // System.out.println("Current linr:" + currentLine.substring(5, 9));
+                model.addRow(new Object[] { null, null, currentLine });
+
                 // TODO: System.out.println(sCurrentLine);
             }
+
+            convertHexToInt(befehle);
 
         } catch (IOException e) {
             // TODO: Log
@@ -469,48 +485,35 @@ DecodeDraft backend = new DecodeDraft();
 
         return codeLines;
     }
-    
 
-    
-    public  void befehleExtrahieren() {
-        try {
-          
-            //ArrayList<String> optional = new ArrayList<String>();
-
-            String line;
-            String befehlcode; // vorläufiger Variablenname
-            String optionalStr; // vorläufiger Variablenname
-
-            BufferedReader reader = new BufferedReader(
-                   new FileReader("h:\\downloads\\TestProg_PicSim_20230413\\TPicSim1.lst"));
-            // System.out.println(reader);
+    // Input List<String> zahlen als hex
+    // Methode initialisiert befehleInteger variable mit den entsprechenden
+    // Befewhlen. oder leerem string
+    // List<Integer> befehleInteger = new ArrayList<>();
+    public void convertHexToInt(List<String> hexList) {
+        for (String hex : hexList) {
+            // Zeilen überspring da wo kein Befehl. Leerer String kann nicht tu Zahl
+            // konvertiert werden
+            if (hex.trim().isEmpty()) {
+                continue;
+            }
 
             try {
-                while ((line = reader.readLine()) != null) {
-                    // System.out.println(line);
-                    optionalStr = line.substring(0, 4);
-                    befehlcode = line.substring(5, 9);
-                    System.out.println("Optional " + optionalStr);
-                    System.out.println("Befehlscode " + befehlcode);
-                    //optional.add(optionalStr);
-                    extracted.add(befehlcode);
+                int decimalValue = Integer.parseInt(hex, 16);
+                befehleInteger.add(decimalValue);
+            } catch (Exception e) {
 
-                }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                System.err.println("Ungültiget HEX String: " + hex);
             }
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-        
-    }
-    
-    //Wandelt Befehl zu einem Integer
-    public static int convertHexToInt(String hex) {
-        int x = Integer.parseInt(hex, 16);
 
-        return x;
+        // Elemente printen
+        for (Integer element : befehleInteger) {
+            System.out.println("Dezimalwert: " + element);
+        }
+        for (Integer intValue : befehleInteger) {
+            console_area.append(intValue.toString() + "\n");
+        }
+
     }
 }
