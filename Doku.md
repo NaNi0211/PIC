@@ -1,6 +1,23 @@
 
 <h1>Doku<h1> 
 
+
+    //input extrahierte werte
+    public void bitorientated(int instruction_code) {
+        int op_code = instruction_code & 0b0001_1100_0000_0000;
+        int b_code =  instruction_code & 0b0000_0011_1000_0000;
+        int f_code = instruction_code & 0b0000_0000_0111_1111;
+        switch (op_code) {
+        case value:
+            
+            break;
+
+        default:
+            break;
+        }
+    }
+
+
 <h2>Einleitung</h2>
 
 <p>Im Rahmen des Labor Rechnerarchitektur wurde die Entwicklung eines PIC16F84 Simulators mit der Programmiersprache Java  und dem Framework Java Swing  für die Grafische Oberfläche durchgeführt um ein besseres Verständnis für PIC zu gewinnen sowie die erste Schritte mit Java Swing zu machen.</p>
