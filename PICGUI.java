@@ -141,13 +141,13 @@ public class PICGUI extends JFrame {
         toolBar.add(btnHelp);
 
         // Lable has to be above mouse event otherwise it doesn't know the variable
-        JLabel lbl_slider = new JLabel("0");
+        JLabel lbl_slider = new JLabel("4"); //default value
         lbl_slider.setBounds(837, 65, 80, 14);
         contentPane.add(lbl_slider);
 
         // https://www.youtube.com/watch?v=LvLFekjVJA8
         // slider min, max, steps
-        JSlider slider = new JSlider(0, 100, 10);
+        JSlider slider = new JSlider(1, 100, 10);
         slider.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -246,19 +246,19 @@ public class PICGUI extends JFrame {
         lblNewLabel_10.setBounds(629, 191, 14, 14);
         panel.add(lblNewLabel_10);
 
-        JLabel lbw = new JLabel("0x00");
+        JLabel lbw = new JLabel("0");
         lbw.setBounds(704, 41, 46, 14);
         panel.add(lbw);
 
-        JLabel lbpc = new JLabel("0x0000");
+        JLabel lbpc = new JLabel("0");
         lbpc.setBounds(704, 66, 46, 14);
         panel.add(lbpc);
 
-        JLabel lbpcl = new JLabel("0x00");
+        JLabel lbpcl = new JLabel("0");
         lbpcl.setBounds(704, 91, 36, 14);
         panel.add(lbpcl);
 
-        JLabel lbpclath = new JLabel("0x00");
+        JLabel lbpclath = new JLabel("0");
         lbpclath.setBounds(704, 116, 46, 14);
         panel.add(lbpclath);
 
@@ -365,9 +365,9 @@ public class PICGUI extends JFrame {
                 { "4E", null },
                 { "4F", null },
                 },
-                new String[] { "", ""}));
+                new String[] { "Addresse", "Werte HEX"}));
         scrollPane_3.setViewportView(gpr_table);
-        gpr_table.setTableHeader(null);//Header entfernen
+       //gpr_table.setTableHeader(null);//Header entfernen
         
         
         
@@ -395,7 +395,7 @@ public class PICGUI extends JFrame {
                 { "0x08", "EEData", null, "0x08", "EECon1", null }, { "0x09", "EEAdr", null, "0x09", "EECon2", null },
                 { "0x0A", "PCLATH", null, "0x0A", "PCLATCH", null },
                 { "0x0B", "INTCON", null, "0x0B", "INTCON", null }, },
-                new String[] { "Adresse", "Bez", "Werte", "Adresse", "Bez", "Werte" }));
+                new String[] { "Adresse", "Bez", "Werte Binär", "Adresse", "Bez", "Werte" }));
         scrollPane_6.setViewportView(sfr_table);
 
         JLabel lblNewLabel = new JLabel("Bank 0");
@@ -460,6 +460,8 @@ public class PICGUI extends JFrame {
         btnRun.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DecodeDraft decoder = new DecodeDraft();
+                decoder.setpC(10);
+                System.out.println(decoder.getpC());
 
                 lbw.setText(String.valueOf(decoder.getwRegister()));
                 lbpc.setText(String.valueOf(decoder.getpC()));
