@@ -85,6 +85,12 @@ Buttons:
 <h3>Breakpoints:</h3>
 <p>Beschribung</p>
 <p>Was passiert auf der GUI:Macht im Prinzip alles was Step macht bis alle Befehle abgearbeitet werden oder auf Stop gedrückt wird</p> 
+<p>Nur da wo Befehle, soll nach setzten run soll bis zu diesem punkt gehen, Step in Run bis Breakpoint
+ 
+Run Button: laufe solange bis du ein Breakpoint findest. Dann gib Ruhe
+Step in: 
+ 
+Breakpoint für button</p>
 <p>Was passiert intern:</p>
 
 
