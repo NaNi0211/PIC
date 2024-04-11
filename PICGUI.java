@@ -36,7 +36,7 @@ public class PICGUI extends JFrame {
     private JPanel contentPane;
     private JTable table;
     private JTable table_1;
-    private JTable table_2;
+    private JTable gpr_table;
     public JTextArea console_area = new JTextArea();
     public JTextArea state_area = new JTextArea();
     // ArrayList<String> extracted = new ArrayList<String>(); ersetzt durch befehle
@@ -286,16 +286,96 @@ public class PICGUI extends JFrame {
         scrollPane_3.setBounds(10, 11, 339, 366);
         panel_gpr.add(scrollPane_3);
 
-        table_2 = new JTable();
-        table_2.setModel(
-                new DefaultTableModel(new Object[][] {}, new String[] { "Value (Binary)", "Value (HEX)", "Address" }) {
-                    Class[] columnTypes = new Class[] { String.class, String.class, String.class };
 
-                    public Class getColumnClass(int columnIndex) {
-                        return columnTypes[columnIndex];
-                    }
-                });
-        scrollPane_3.setViewportView(table_2);
+        
+        
+        
+        gpr_table = new JTable();
+        gpr_table.setModel(new DefaultTableModel(new Object[][] {
+                { "0C", null },
+                { "0D", null },
+                { "0E", null },
+                { "0F", null },
+                
+                { "10", null },
+                { "11", null },
+                { "12", null },
+                { "13", null },
+                { "14", null },
+                { "15", null },
+                { "16", null },
+                { "17", null },
+                { "18", null },
+                { "19", null },
+                { "1A", null },
+                { "1B", null },
+                { "1C", null },
+                { "1D", null },
+                { "1E", null },
+                { "1F", null },
+                
+                { "20", null },
+                { "21", null },
+                { "22", null },
+                { "23", null },
+                { "24", null },
+                { "25", null },
+                { "26", null },
+                { "27", null },
+                { "28", null },
+                { "29", null },
+                { "2A", null },
+                { "2B", null },
+                { "2C", null },
+                { "2D", null },
+                { "2E", null },
+                { "2F", null },
+                
+                { "30", null },
+                { "31", null },
+                { "32", null },
+                { "33", null },
+                { "34", null },
+                { "35", null },
+                { "36", null },
+                { "37", null },
+                { "38", null },
+                { "39", null },
+                { "3A", null },
+                { "3B", null },
+                { "3C", null },
+                { "3D", null },
+                { "3E", null },
+                { "3F", null },
+                
+                { "40", null },
+                { "41", null },
+                { "42", null },
+                { "43", null },
+                { "44", null },
+                { "45", null },
+                { "46", null },
+                { "47", null },
+                { "48", null },
+                { "49", null },
+                { "4A", null },
+                { "4B", null },
+                { "4C", null },
+                { "4D", null },
+                { "4E", null },
+                { "4F", null },
+                },
+                new String[] { "", ""}));
+        scrollPane_3.setViewportView(gpr_table);
+        gpr_table.setTableHeader(null);//Header entfernen
+        
+        
+        
+        
+        
+        
+        
+        
 
         JPanel panel_sfr = new JPanel();
         tabbedPane_1.addTab("SFR", null, panel_sfr, null);
