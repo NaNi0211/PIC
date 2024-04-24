@@ -1,13 +1,13 @@
 
 public class DecodeDraft {
 
-    /*
+     /*
      * name : binaryCode? ganze ram implementieren? NOP_befehl? quarzfreuez zur
      * einstellung der laufzeu flags nur bei arimetischen PCLuPCLATH
      */
     private int wRegister = 0;
     private int[][] ram = new int[2][12];
-   
+
     private int[] EEROM;
     private int pC;
     private int pCL;
@@ -60,11 +60,11 @@ public class DecodeDraft {
         int literalCode = instructionCode & 0b0000_0000_1111_1111;
         int result = 0;
         int bottomHalfbyte = 0;
-        rb0= (ram[rb0][3]>>5)&1;
+        rb0 = (ram[rb0][3] >> 5) & 1;
         if (pCL != pC) {
             pCL = pC;
         }
-        
+
         switch (opCode) {
         case 0b0011_1110_0000_0000: // ADDLW
             result = wRegister + literalCode;
@@ -169,15 +169,14 @@ public class DecodeDraft {
         int fileCode = instructionCode & 0b0000_0000_0111_1111;
         switch (opCode) {
         case 0b0000_1000_0000_0000: // MOVF
-          
-                if (destBit == 0b0000_0000_1000_0000) {
-                    ram[rb0][fileCode] = ram[rb0][fileCode];
-                }
-            else {
+
+            if (destBit == 0b0000_0000_1000_0000) {
+                ram[rb0][fileCode] = ram[rb0][fileCode];
+            } else {
 
                 wRegister = ram[rb0][fileCode];
             }
-            
+
         default:
 
         }
@@ -188,11 +187,11 @@ public class DecodeDraft {
 
             digitcarrybit = 1;
             ram[rb0][3] = (ram[rb0][3]) | (digitcarrybit << 1);
-           
+
         } else {
             digitcarrybit = 0;
             ram[rb0][3] = (ram[rb0][3]) & (digitcarrybit << 1);
-           
+
         }
     }
 
@@ -202,11 +201,11 @@ public class DecodeDraft {
                 || ((register >= 0b0000_0000) && (result < 0b0000_0000))) {
             carrybit = 1;
             ram[rb0][3] = (ram[rb0][3]) | (carrybit);
-            
+
         } else {
             carrybit = 0;
             ram[rb0][3] = (ram[rb0][3]) & (carrybit);
-          
+
         }
 
     }
@@ -215,15 +214,108 @@ public class DecodeDraft {
         if (result == 0) {
             zerobit = 1;
             ram[rb0][3] = (ram[rb0][3]) | (zerobit << 2);
-           
+
         } else {
             zerobit = 0;
             ram[rb0][3] = (ram[rb0][3]) & (zerobit << 2);
-          
+
         }
 
     }
-   
+
+    public void movwf(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        ram[rb0][fileCode] = wRegister;
+        zero(wRegister);
+        pC++;
     }
+
+    public void addwf(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        int destinationBit = instructionCode & 0b0000_1000_0000_0000;
+        int fileValue = ram[rb0][fileCode];
+        int result = wRegister + fileValue;
+        zero(result);
+        carry(result, wRegister);
+        digitcarry(result, (wRegister & 0b0000_1111) + (fileValue & 0b0000_1111));
+        if (destinationBit == 0) {
+            ram[rb0][fileCode] = result;
+        } else {
+            wRegister = result;
+        }
+        pC++;
+    }
+
+    public void andwf(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        int destinationBit = instructionCode & 0b0000_1000_0000_0000;
+        int fileValue = ram[rb0][fileCode];
+        int result = wRegister & fileValue;
+        zero(result);
+        if (destinationBit == 0) {
+            ram[rb0][fileCode] = result;
+        } else {
+            wRegister = result;
+        }
+        pC++;
+    }
+
+    public void decfsz(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        int destinationBit = instructionCode & 0b0000_1000_0000_0000;
+        ram[rb0][fileCode]--;
+        if (ram[rb0][fileCode] == 0) {
+            pC += 2; // Skip next instruction
+        } else {
+            pC++;
+        }
+    }
+
+    public void incfsz(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        int destinationBit = instructionCode & 0b0000_1000_0000_0000;
+        ram[rb0][fileCode]++;
+        if (ram[rb0][fileCode] == 0) {
+            pC += 2; // Skip next instruction
+        } else {
+            pC++;
+        }
+    }
+
+    public void bsf(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        int bitNumber = (instructionCode >> 7) & 0b0000_0000_0000_0111;
+        ram[rb0][fileCode] |= (1 << bitNumber);
+        pC++;
+    }
+
+    public void bcf(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        int bitNumber = (instructionCode >> 7) & 0b0000_0000_0000_0111;
+        ram[rb0][fileCode] &= ~(1 << bitNumber);
+        pC++;
+    }
+
+    public void btfsc(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        int bitNumber = (instructionCode >> 7) & 0b0000_0000_0000_0111;
+        if ((ram[rb0][fileCode] & (1 << bitNumber)) == 0) {
+            pC += 2; // Skip next instruction
+        } else {
+            pC++;
+        }
+    }
+
+    public void btfss(int instructionCode) {
+        int fileCode = instructionCode & 0b0000_0111_1111_1111;
+        int bitNumber = (instructionCode >> 7) & 0b0000_0000_0000_0111;
+        if ((ram[rb0][fileCode] & (1 << bitNumber)) != 0) {
+            pC += 2; // Skip next instruction
+        } else {
+            pC++;
+        }
+    }
+
+}
 
 
