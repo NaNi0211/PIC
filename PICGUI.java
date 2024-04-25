@@ -31,7 +31,9 @@ import javax.swing.table.TableColumnModel;
 //add row https://www.youtube.com/watch?v=eAJphO_PHTU&t=64s
 
 public class PICGUI extends JFrame {
-
+    private static int[] ra_pins = new int[8];
+    private static int[] rb_pins = new int[8];
+    
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTable table;
@@ -41,7 +43,7 @@ public class PICGUI extends JFrame {
     public JTextArea state_area = new JTextArea();
     // ArrayList<String> extracted = new ArrayList<String>(); ersetzt durch befehle
     List<String> befehle = new ArrayList<>();
-    static List<Integer> befehleInteger = new ArrayList<>();
+    static ArrayList<Integer> befehleInteger = new ArrayList<>();
     /**
      * @wbp.nonvisual location=-249,529
      */
@@ -433,6 +435,7 @@ public class PICGUI extends JFrame {
         scrollPane_4.setBounds(10, 11, 339, 366);
         panel_io.add(scrollPane_4);
 
+        
         io_table = new JTable();
         io_table.setModel(new DefaultTableModel(
                 new Object[][] { { "0", "i", null, "0", "i", null }, { "1", "i", null, "1", "i", null },
@@ -441,6 +444,12 @@ public class PICGUI extends JFrame {
                         { "6", "i", null, "6", "i", null }, { "7", "i", null, "7", "i", null }, },
                 new String[] { "RA", "Tris", "Pin", "RB", "Tris", "Pin" }));
         scrollPane_4.setViewportView(io_table);
+        
+        //io_table.getColumnModel().getColumn(2).;
+        
+        
+        
+        
 
         JLabel lblNewLabel_12 = new JLabel("Quartzfrequenz");
         lblNewLabel_12.setBounds(870, 45, 89, 14);
@@ -459,28 +468,31 @@ public class PICGUI extends JFrame {
         JButton btnRun = new JButton("Run");
         btnRun.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DecodeDraft decoder = new DecodeDraft();
-                decoder.setpC(10);
-                System.out.println(decoder.getpC());
+               
+             
+                DecodeDraft.runCompleteCode();
 
-                lbw.setText(String.valueOf(decoder.getwRegister()));
-                lbpc.setText(String.valueOf(decoder.getpC()));
-                lbpcl.setText(String.valueOf(decoder.getpCL()));
-                // lbpclath.setText(String.valueOf(decoder.getZerobit()));
+                lbw.setText(String.valueOf(DecodeDraft.wRegister));
+                lbpc.setText(String.valueOf(DecodeDraft.pC_Next));
+                lbpcl.setText(String.valueOf(DecodeDraft.pC_Current));
+                lbpclath.setText(String.valueOf(DecodeDraft.zerobit));
 
-                lbc.setText(String.valueOf(decoder.getCarrybit()));
-                lbdc.setText(String.valueOf(decoder.getDigitcarrybit()));
-                lbz.setText(String.valueOf(decoder.getZerobit()));
+                lbc.setText(String.valueOf(DecodeDraft.carrybit));
+                lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
+                lbz.setText(String.valueOf(DecodeDraft.zerobit));
 
                 // WErte im Stack Speichern
-                stack_table.setValueAt(String.valueOf(decoder.getStack()[0]), 0, 1);
-                stack_table.setValueAt(String.valueOf(decoder.getStack()[1]), 1, 1);
-                stack_table.setValueAt(String.valueOf(decoder.getStack()[2]), 2, 1);
-                stack_table.setValueAt(String.valueOf(decoder.getStack()[3]), 3, 1);
-                stack_table.setValueAt(String.valueOf(decoder.getStack()[4]), 4, 1);
-                stack_table.setValueAt(String.valueOf(decoder.getStack()[5]), 5, 1);
-                stack_table.setValueAt(String.valueOf(decoder.getStack()[6]), 6, 1);
-                stack_table.setValueAt(String.valueOf(decoder.getStack()[7]), 7, 1);
+                
+                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
+                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
+                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
+                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]), 3, 1);
+                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]), 4, 1);
+                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]), 5, 1);
+                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]), 6, 1);
+                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
+                
+                
 
                 // System.out.println(decoder.getStack()[0]); -> 0
 
@@ -493,7 +505,7 @@ public class PICGUI extends JFrame {
                  */
             }
         });
-        btnRun.setBounds(74, 61, 89, 23);
+        btnRun.setBounds(65, 61, 89, 23);
         contentPane.add(btnRun);
 
         JButton btnStop = new JButton("Stop");
@@ -505,6 +517,13 @@ public class PICGUI extends JFrame {
         contentPane.add(btnStep);
 
         JButton btnReset = new JButton("Reset");
+        btnReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //alle werte zurücksetzen
+                
+                
+            }
+        });
         btnReset.setBounds(467, 61, 89, 23);
         contentPane.add(btnReset);
 
@@ -576,6 +595,8 @@ public class PICGUI extends JFrame {
             }
 
             convertHexToInt(befehle);
+            //liest eingelesene Integer List Befehle ein und übergibt diese der internen List von DecodeDraft
+            DecodeDraft.setup_with_LSTcode(befehleInteger);
 
         } catch (IOException e) {
             // TODO: Log
@@ -604,7 +625,10 @@ public class PICGUI extends JFrame {
 
                 System.err.println("Ungültiget HEX String: " + hex);
             }
+            
         }
+        
+        ArrayList<Integer> debug = befehleInteger;
 
         // Elemente printen
         for (Integer element : befehleInteger) {
