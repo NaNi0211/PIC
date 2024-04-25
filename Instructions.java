@@ -89,3 +89,4 @@ public class Instructions {
             DecodeDraft.wRegister = DecodeDraft.ram[DecodeDraft.rb0][fileCode];
         }
     }
+}
