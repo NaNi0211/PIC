@@ -148,7 +148,7 @@ public class DecodeDraft  {
         }
     }
 
-    public void byteorientated(int instructionCode) {
+    public static void byteorientated(int instructionCode) {
         int opCode = instructionCode & 0b1111_1111_0000_0000;
         int destBit = instructionCode & 0b0000_0000_1000_0000;
         int fileCode = instructionCode & 0b0000_0000_0111_1111;
