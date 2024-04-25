@@ -19,7 +19,7 @@ public class DecodeDraft  {
     static int wRegister = 0;
     static int[][] ram = new int[2][12];
     static int[] EEROM;
-    static int pC_Next;
+    static int pC_Next = 1;
     static int pC_Current;
     static int[] stack = new int[8];
     static int stackpointer;
@@ -27,8 +27,8 @@ public class DecodeDraft  {
     static int digitcarrybit;
     static int zerobit;
     static int rb0;
-    static boolean resetValue;
-    static ArrayList<Integer> execute;
+    static boolean resetValue=false;
+    static ArrayList<Integer> execute = new  ArrayList<Integer>();
    
 
     public int getwRegister() {
@@ -265,8 +265,10 @@ public class DecodeDraft  {
     public static void runCompleteCode() {
         // TODO Auto-generated method stub
        
-while(resetValue) {
+while(!resetValue) {
     executeliteralCode(execute.get(pC_Next));
+    System.out.println("Test:"+Integer.toHexString(DecodeDraft.wRegister));
+
 }
     }
 
