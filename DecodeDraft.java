@@ -1,22 +1,35 @@
 
-public class DecodeDraft {
+import java.util.ArrayList;
 
-     /*
+public class DecodeDraft  {
+
+    /*
      * name : binaryCode? ganze ram implementieren? NOP_befehl? quarzfreuez zur
      * einstellung der laufzeu flags nur bei arimetischen PCLuPCLATH
      */
-    private int wRegister = 0;
-    private int[][] ram = new int[2][12];
+  
 
-    private int[] EEROM;
-    private int pC;
-    private int pCL;
-    private int[] stack = new int[8];
-    private int stackpointer;
-    private int carrybit;
-    private int digitcarrybit;
-    private int zerobit;
-    private int rb0;
+    public int getStackpointer() {
+        return stackpointer;
+    }
+
+    public int getRb0() {
+        return rb0;
+    }
+    static int wRegister = 0;
+    static int[][] ram = new int[2][12];
+    static int[] EEROM;
+    static int pC_Next;
+    static int pC_Current;
+    static int[] stack = new int[8];
+    static int stackpointer;
+    static int carrybit;
+    static int digitcarrybit;
+    static int zerobit;
+    static int rb0;
+    static boolean resetValue;
+    static ArrayList<Integer> execute;
+   
 
     public int getwRegister() {
         return wRegister;
@@ -31,11 +44,11 @@ public class DecodeDraft {
     }
 
     public int getpC() {
-        return pC;
+        return pC_Next;
     }
 
     public int getpCL() {
-        return pCL;
+        return pC_Current;
     }
 
     public int[] getStack() {
@@ -54,90 +67,61 @@ public class DecodeDraft {
         return zerobit;
     }
 
-    public void literalbefehl(int instructionCode) {
-
+//ADDLW,ANDLW, IORLW,SUBLW,MOVLW, XORLW
+    public static void executeliteralCode(int instructionCode) {
         int opCode = instructionCode & 0b0011_1111_0000_0000;
         int literalCode = instructionCode & 0b0000_0000_1111_1111;
-        int result = 0;
-        int bottomHalfbyte = 0;
+
         rb0 = (ram[rb0][3] >> 5) & 1;
-        if (pCL != pC) {
-            pCL = pC;
+        if (pC_Current != pC_Next) {
+            pC_Current = pC_Next;
         }
 
         switch (opCode) {
-        case 0b0011_1110_0000_0000: // ADDLW
-            result = wRegister + literalCode;
-            bottomHalfbyte = (wRegister & 0b0000_1111) + (literalCode & 0b0000_1111);
-            zero(result);
-            carry(result, wRegister);
-            digitcarry(result, bottomHalfbyte);
-            wRegister = result % 256;
-
-            pC++;
+        case 0b0011_1110_0000_0000:
+            wRegister = Instructions.addlw(wRegister, literalCode);
+            pC_Next++;
             break;
-        case 0b0011_1001_0000_0000:// ANDLW
-            result = wRegister & literalCode;
-            zero(wRegister);
-            wRegister = result % 256;
-            pC++;
-
+        case 0b0011_1001_0000_0000:
+            wRegister = Instructions.andlw(wRegister, literalCode);
+            pC_Next++;
             break;
-        case 0b0011_1000_0000_0000:// IORLW
-            result = wRegister | literalCode;
-            zero(result);
-            wRegister = result % 256;
-            pC++;
-
+        case 0b0011_1000_0000_0000:
+            wRegister = Instructions.iorlw(wRegister, literalCode);
+            pC_Next++;
             break;
-        case 0b0011_1100_0000_0000:// SUBLW
-            result = wRegister - literalCode;
-            int zweierKom = (((literalCode ^ (0b1111_1111)) + 1) & 0b0000_1111);
-            bottomHalfbyte = (wRegister & 0b0000_1111) + zweierKom;
-            zero(result);
-            carry(result, wRegister);
-            digitcarry(result, bottomHalfbyte);
-            result *= -1;
-            wRegister = result % 256;
-            pC++;
-
+        case 0b0011_1100_0000_0000:
+            wRegister = Instructions.sublw(wRegister, literalCode);
+            pC_Next++;
             break;
-        case 0b0011_0000_0000_0000:// MOVLW
-            result = literalCode;
-            wRegister = result % 256;
-            pC++;
-
+        case 0b0011_0000_0000_0000:
+            wRegister = Instructions.movlw(literalCode);
+            pC_Next++;
             break;
-        case 0b0011_1010_0000_0000:// XORLW
-            result = wRegister ^ literalCode;
-            zero(result);
-            wRegister = result % 256;
-            pC++;
-
+        case 0b0011_1010_0000_0000:
+            wRegister = Instructions.xorlw(wRegister, literalCode);
+            pC_Next++;
             break;
-        case 0b0011_0100_0000_0000: // RETLW
-            wRegister = literalCode;
+        case 0b0011_0100_0000_0000:
+            wRegister = Instructions.retlw(literalCode);
             jump(0b0000_0000_0000_1000);
-
+            break;
         default:
             jump(instructionCode);
         }
-
     }
 
-    public void jump(int instructionCode) {
+//Goto,call
+    public static void jump(int instructionCode) {
 
         int opCode = instructionCode & 0b0011_1000_0000_0000;
         int literalCode = instructionCode & 0b0000_0111_1111_1111;
         switch (opCode) {
         case 0b0010_1000_0000_0000: // GOTO
-            pC = literalCode;
-
+            pC_Next = Instructions.goto0(literalCode);
             break;
         case 0b0010_0000_0000_0000: // CALL
-            stack[stackpointer++] = ++pC;
-            pC = literalCode;
-
+            pC_Next = Instructions.call(literalCode);
             break;
 
         default:
@@ -147,17 +131,18 @@ public class DecodeDraft {
 
     }
 
-    public void onlyOp(int instructionCode) {
+    public static void onlyOp(int instructionCode) {
         switch (instructionCode) {
         case 0b0000_0000_0000_0000: // NOP
-            pC++;
+            Instructions.nop();
+            pC_Next++;
             break;
         case 0b0000_0001_0000_0000: // CLRW
-            wRegister = 0;
-            pC++;
+            wRegister = Instructions.clrw();
+            pC_Next++;
             break;
         case 0b0000_0000_0000_1000: // RETURN
-            pC = stack[--stackpointer];
+            Instructions.return0();
             break;
 
         }
@@ -169,20 +154,13 @@ public class DecodeDraft {
         int fileCode = instructionCode & 0b0000_0000_0111_1111;
         switch (opCode) {
         case 0b0000_1000_0000_0000: // MOVF
-
-            if (destBit == 0b0000_0000_1000_0000) {
-                ram[rb0][fileCode] = ram[rb0][fileCode];
-            } else {
-
-                wRegister = ram[rb0][fileCode];
-            }
-
+            Instructions.movf(destBit,fileCode);
         default:
 
         }
     }
 
-    private void digitcarry(int result, int halfbyte) {
+    public static void digitcarry(int result, int halfbyte) {
         if ((halfbyte & 1111_0000) != 0) {
 
             digitcarrybit = 1;
@@ -195,7 +173,7 @@ public class DecodeDraft {
         }
     }
 
-    private void carry(int result, int register) {
+    public static void carry(int result, int register) {
 
         if (((register <= 0b1111_1111) && (result > 0b1111_1111))
                 || ((register >= 0b0000_0000) && (result < 0b0000_0000))) {
@@ -210,7 +188,7 @@ public class DecodeDraft {
 
     }
 
-    private void zero(int result) {
+    public static void zero(int result) {
         if (result == 0) {
             zerobit = 1;
             ram[rb0][3] = (ram[rb0][3]) | (zerobit << 2);
@@ -223,99 +201,81 @@ public class DecodeDraft {
 
     }
 
-    public void movwf(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        ram[rb0][fileCode] = wRegister;
-        zero(wRegister);
-        pC++;
+    
+    public static int get_nxt_ProgrammCounter() {
+        // TODO Auto-generated method stub
+        return pC_Next;
     }
 
-    public void addwf(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        int destinationBit = instructionCode & 0b0000_1000_0000_0000;
-        int fileValue = ram[rb0][fileCode];
-        int result = wRegister + fileValue;
-        zero(result);
-        carry(result, wRegister);
-        digitcarry(result, (wRegister & 0b0000_1111) + (fileValue & 0b0000_1111));
-        if (destinationBit == 0) {
-            ram[rb0][fileCode] = result;
+  
+    public static int get_current_ProgrammCounter() {
+        // TODO Auto-generated method stub
+        return pC_Current;
+    }
+
+   
+    public static int getCurrentBank() {
+        // TODO Auto-generated method stub
+        int rb0 = (ram[0][3] >> 5) & 0000_0001;
+
+        return rb0;
+
+    }
+
+    public static int getValOnAdress(int bank, int adress) {
+        // TODO Auto-generated method stub
+        return ram[bank][adress];
+
+    }
+
+    public static void setValOnAdress(int bank, int adress, int val) {
+        // TODO Auto-generated method stub
+        ram[bank][adress] = val;
+
+    }
+
+    public static void setBITValOnAdress(int bank, int adress, int bitPos, int bitVal) {
+        // TODO Auto-generated method stub
+        int maske = bitVal << bitPos;
+        if (bitVal == 0) {
+            ram[bank][adress] = ram[bank][adress] & maske;
         } else {
-            wRegister = result;
+
+            ram[bank][adress] = ram[bank][adress] | maske;
         }
-        pC++;
+
     }
 
-    public void andwf(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        int destinationBit = instructionCode & 0b0000_1000_0000_0000;
-        int fileValue = ram[rb0][fileCode];
-        int result = wRegister & fileValue;
-        zero(result);
-        if (destinationBit == 0) {
-            ram[rb0][fileCode] = result;
-        } else {
-            wRegister = result;
-        }
-        pC++;
+  
+    public static int getBITValOnAdress(int bank, int adress, int bitPos) {
+        // TODO Auto-generated method stub
+        int bitShift = ram[bank][adress] >> bitPos;
+        int maske = 0b0000_0001;
+        return bitShift & maske;
     }
 
-    public void decfsz(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        int destinationBit = instructionCode & 0b0000_1000_0000_0000;
-        ram[rb0][fileCode]--;
-        if (ram[rb0][fileCode] == 0) {
-            pC += 2; // Skip next instruction
-        } else {
-            pC++;
-        }
+
+    public static void setup_with_LSTcode(ArrayList<Integer> list) {
+        // TODO Auto-generated method stub
+        execute = list;
+
     }
 
-    public void incfsz(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        int destinationBit = instructionCode & 0b0000_1000_0000_0000;
-        ram[rb0][fileCode]++;
-        if (ram[rb0][fileCode] == 0) {
-            pC += 2; // Skip next instruction
-        } else {
-            pC++;
-        }
+
+    public static void runCompleteCode() {
+        // TODO Auto-generated method stub
+       
+while(resetValue) {
+    executeliteralCode(execute.get(pC_Next));
+}
     }
 
-    public void bsf(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        int bitNumber = (instructionCode >> 7) & 0b0000_0000_0000_0111;
-        ram[rb0][fileCode] |= (1 << bitNumber);
-        pC++;
-    }
 
-    public void bcf(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        int bitNumber = (instructionCode >> 7) & 0b0000_0000_0000_0111;
-        ram[rb0][fileCode] &= ~(1 << bitNumber);
-        pC++;
-    }
-
-    public void btfsc(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        int bitNumber = (instructionCode >> 7) & 0b0000_0000_0000_0111;
-        if ((ram[rb0][fileCode] & (1 << bitNumber)) == 0) {
-            pC += 2; // Skip next instruction
-        } else {
-            pC++;
-        }
-    }
-
-    public void btfss(int instructionCode) {
-        int fileCode = instructionCode & 0b0000_0111_1111_1111;
-        int bitNumber = (instructionCode >> 7) & 0b0000_0000_0000_0111;
-        if ((ram[rb0][fileCode] & (1 << bitNumber)) != 0) {
-            pC += 2; // Skip next instruction
-        } else {
-            pC++;
-        }
+    public static void do_cmd() {
+        // TODO Auto-generated method stub
+        executeliteralCode(execute.get(pC_Next));
     }
 
 }
 
-
+  
