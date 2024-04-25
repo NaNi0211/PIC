@@ -2,6 +2,11 @@
 
 ## TODO GUI
 
+Datei löschen nach einsesen von anderer Datei
+
+
+
+
  DecodeDraft m = new DecodeDraft();
 
   
