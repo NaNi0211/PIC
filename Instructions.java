@@ -1,92 +1,193 @@
 
-public class Instructions {
+public class Instructions extends DecodeDraft {
 
     // Literal
-    public static int addlw(int wRegister, int literalCode) {
+    public static void addlw(int literalCode) {
         int result = wRegister + literalCode;
         int bottomHalfbyte = (wRegister & 0b0000_1111) + (literalCode & 0b0000_1111);
-        DecodeDraft.zero(result);
-        DecodeDraft.carry(result, wRegister);
-        DecodeDraft.digitcarry(result, bottomHalfbyte);
+        zero(result);
+        carry(result, wRegister);
+        digitcarry(result, bottomHalfbyte);
 
-        return result % 256;
+        wRegister = result % 256;
+        pC_Next++;
     }
 
-    public static int andlw(int wRegister, int literalCode) {
+    public static void andlw(int literalCode) {
         int result = wRegister & literalCode;
-        DecodeDraft.zero(wRegister);
-        return result % 256;
+        zero(wRegister);
+        wRegister = result % 256;
+        pC_Next++;
     }
 
-    public static int iorlw(int wRegister, int literalCode) {
+    public static void iorlw(int literalCode) {
         int result = wRegister | literalCode;
-        DecodeDraft.zero(result);
-        // Implement zero check as needed
-        return result % 256;
+        zero(result);
+        wRegister = result % 256;
+        pC_Next++;
     }
 
-    public static int sublw(int wRegister, int literalCode) {
+    public static void sublw(int literalCode) {
         int result = wRegister - literalCode;
         int zweierKom = (((literalCode ^ (0b1111_1111)) + 1) & 0b0000_1111);
         int bottomHalfbyte = (wRegister & 0b0000_1111) + zweierKom;
-        DecodeDraft.zero(result);
-        DecodeDraft.carry(result, wRegister);
-        DecodeDraft.digitcarry(result, bottomHalfbyte);
+        zero(result);
+        carry(result, wRegister);
+        digitcarry(result, bottomHalfbyte);
         result *= -1;
-        return result % 256;
+        wRegister = result % 256;
+        pC_Next++;
     }
 
-    public static int movlw(int literalCode) {
+    public static void movlw(int literalCode) {
         int result = literalCode;
-        return result % 256;
+        wRegister = result % 256;
+        pC_Next++;
     }
 
-    public static int xorlw(int wRegister, int literalCode) {
+    public static void xorlw(int literalCode) {
         int result = wRegister ^ literalCode;
-        DecodeDraft.zero(result);
-        return result % 256;
+        zero(result);
+        wRegister = result % 256;
+        pC_Next++;
     }
 
-    public static int retlw(int literalCode) {
-        return literalCode;
+    public static void retlw(int literalCode) {
+        wRegister = literalCode;
+        pC_Next++;
     }
 
     // Jump
-    public static int goto0(int literalCode) {
-        return literalCode;
+    public static void goto0(int literalCode) {
+        pC_Next = literalCode;
     }
 
-    public static int call(int literalCode) {
-      setCallnReturn(0);
-        return literalCode;
+    public static void call(int literalCode) {
+        setCallnReturn(0);
+        pC_Next = literalCode;
     }
 
     // onlyOp
     public static void nop() {
+        pC_Next++;
     }
 
-    public static int clrw() {
-        return 0;
+    public static void clrw() {
+        wRegister = 0;
+        pC_Next++;
     }
 
     public static void return0() {
-       setCallnReturn(1);
+        setCallnReturn(1);
     }
+
     public static void setCallnReturn(int value) {
         if (value == 0) {
-            DecodeDraft.stack[DecodeDraft.stackpointer++] = ++DecodeDraft.pC_Next;
+            stack[stackpointer++] = ++pC_Next;
         } else {
-            DecodeDraft.pC_Next = DecodeDraft.stack[--DecodeDraft.stackpointer];
+            pC_Next = stack[--stackpointer];
         }
     }
+
     // byteorientated
     public static void movf(int destBit, int fileCode) {
         if (destBit == 0b0000_0000_1000_0000) {
-            DecodeDraft.ram[DecodeDraft.rb0][fileCode] = DecodeDraft.ram[DecodeDraft.rb0][fileCode];
+            ram[rb0][fileCode] = ram[rb0][fileCode];
 
         } else {
 
-            DecodeDraft.wRegister = DecodeDraft.ram[DecodeDraft.rb0][fileCode];
+            wRegister = ram[rb0][fileCode];
+        }
+    }
+    // Ant
+
+    public static void movwf(int fileCode) {
+
+        ram[rb0][fileCode] = wRegister;
+        // zero(wRegister);
+
+    }
+
+    public static void addwf(int fileCode, int destBit) {
+
+        int fileValue = ram[rb0][fileCode];
+        int result = wRegister + fileValue;
+        zero(result);
+        carry(result, wRegister);
+        digitcarry(result, (wRegister & 0b0000_1111) + (fileValue & 0b0000_1111));
+        if (destBit == 0) {
+            ram[rb0][fileCode] = result;
+        } else {
+            wRegister = result;
+        }
+        pC_Next++;
+    }
+
+    public static void andwf(int fileCode, int destBit) {
+
+        int fileValue = ram[rb0][fileCode];
+        int result = wRegister & fileValue;
+        zero(result);
+        if (destBit == 0) {
+            ram[rb0][fileCode] = result;
+        } else {
+            wRegister = result;
+        }
+
+        pC_Next++;
+    }
+
+    public static void decfsz(int fileCode) {
+
+        ram[rb0][fileCode]--;
+        if (ram[rb0][fileCode] == 0) {
+            pC_Next += 2; // Skip next instruction
+        } else {
+            pC_Next++;
+        }
+    }
+
+    public static void incfsz(int fileCode) {
+
+        ram[rb0][fileCode]++;
+        if (ram[rb0][fileCode] == 0) {
+            pC_Next += 2; // Skip next instruction
+        } else {
+            pC_Next++;
+        }
+    }
+
+    public static void bsf(int fileCode, int bitCode) {
+
+        ram[rb0][fileCode] |= (1 << bitCode);
+        pC_Next++;
+    }
+
+    public static void bcf(int fileCode, int bitCode) {
+
+        ram[rb0][fileCode] &= ~(1 << bitCode);
+        pC_Next++;
+    }
+
+    public static void btfsc(int fileCode, int bitCode) {
+
+        if ((ram[rb0][fileCode] & (1 << bitCode)) == 0) {
+            pC_Next += 2;
+
+            // Skip next instruction
+        } else {
+            pC_Next++;
+        }
+    }
+
+    public static void btfss(int fileCode, int bitCode) {
+
+        if ((ram[rb0][fileCode] & (1 << bitCode)) != 0) {
+            pC_Next += 2;
+
+            // Skip next instruction
+        } else {
+            pC_Next++;
         }
     }
 }
