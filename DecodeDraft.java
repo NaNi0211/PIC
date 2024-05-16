@@ -1,6 +1,6 @@
 
 import java.util.ArrayList;
-
+import java.util.Arrays;
 public class DecodeDraft{
 
     /*
@@ -21,7 +21,7 @@ public class DecodeDraft{
     static int rb0;
     static boolean resetValue;
     static ArrayList<Integer> execute;
-
+   
     public static void decode(int instructionCode) {
         literalInstructions(instructionCode);
 
@@ -311,10 +311,11 @@ public class DecodeDraft{
 
     }
 
-    public static void runCompleteCode() {
-
-        while (resetValue) {
+    public static void runCompleteCode(long start,int quarts) {
+ int lastPC =-1;
+        while (!resetValue && !(lastPC==pC_Next)) {
             literalInstructions(execute.get(pC_Next));
+            lastPC++;
         }
     }
 
