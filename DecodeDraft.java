@@ -1,7 +1,8 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
-public class DecodeDraft{
+
+public class DecodeDraft extends PICGUI {
 
     /*
      * name : binaryCode? ganze ram implementieren? NOP_befehl? quarzfreuez zur
@@ -9,7 +10,7 @@ public class DecodeDraft{
      */
 
     static int wRegister = 0;
-    static int[][] ram = new int[2][12];
+    static int[][] ram = new int[2][80];
     static int[] EEROM;
     static int pC_Next;
     static int pC_Current;
@@ -20,10 +21,14 @@ public class DecodeDraft{
     static int zerobit;
     static int rb0;
     static boolean resetValue;
+    static double runtime;
+    static int endOfProgrammCheck;
     static ArrayList<Integer> execute;
-   
+
     public static void decode(int instructionCode) {
         literalInstructions(instructionCode);
+        bitorientated(instructionCode);
+        byteorientated(instructionCode);
 
     }
 
@@ -33,45 +38,53 @@ public class DecodeDraft{
         int literalCode = instructionCode & 0b0000_0000_1111_1111;
 
         rb0 = (ram[rb0][3] >> 5) & 1;
-        if (pC_Current != pC_Next) {
-            pC_Current = pC_Next;
-        }
 
         switch (opCode) {
 
         case 0b0011_1110_0000_0000:
             Instructions.addlw(literalCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0011_1001_0000_0000:
             Instructions.andlw(literalCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0011_1000_0000_0000:
             Instructions.iorlw(literalCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0011_1100_0000_0000:
             Instructions.sublw(literalCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0011_0000_0000_0000:
             Instructions.movlw(literalCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0011_1010_0000_0000:
             Instructions.xorlw(literalCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0011_0100_0000_0000:
             Instructions.retlw(literalCode);
-            jump(0b0000_0000_0000_1000);
+
+            runtime += (4.0 / quartz);
             break;
-        case 0b0000_0000_0000_1000: // RETURN
-            Instructions.return0();
-            break;
+        case 0b0000_0000_0000_0000: // RETURN
+            if (instructionCode == 0b0000_0000_0000_1000) {
+                Instructions.return0();
+                runtime += (4.0 / quartz);
+                break;
+            }
         default:
             jump(instructionCode);
+
         }
     }
 
@@ -84,10 +97,12 @@ public class DecodeDraft{
         switch (opCode) {
         case 0b0010_1000_0000_0000: // GOTO
             Instructions.goto0(literalCode);
+            runtime += 2 * (4.0 / quartz);
             break;
 
         case 0b0010_0000_0000_0000: // CALL
             Instructions.call(literalCode);
+            runtime += 2 * (4.0 / quartz);
             break;
 
         default:
@@ -98,7 +113,7 @@ public class DecodeDraft{
 
     public static void byteorientated(int instructionCode) {
 
-        int opCode = instructionCode & 0b0000_1111_0000_0000;
+        int opCode = instructionCode & 0b0011_1111_0000_0000;
         int destBit = instructionCode & 0b0000_0000_1000_0000;
         int fileCode = instructionCode & 0b0000_0000_0111_1111;
 
@@ -106,31 +121,37 @@ public class DecodeDraft{
 
         case 0b0000_1000_0000_0000: // MOVF
             // TODO Instructions.movf(destBit, fileCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0000_0111_0000_0000:// ADDWF
             Instructions.addwf(fileCode, destBit);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0000_0101_0000_0000: // ANDWF
             Instructions.andwf(fileCode, destBit);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0000_1011_0000_0000: // DECFSZ
             Instructions.decfsz(fileCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0000_1111_0000_0000:// INCFSZ
             Instructions.incfsz(fileCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0000_0000_0000_0000: // MOVWF //NOP
 
             if (destBit == 0b0000_0000_1000_0000) {// MOVWF
                 Instructions.movwf(fileCode);
-
-            } else if (destBit == 0b0000_0000_0000_0000) {// NOP
+                runtime += (4.0 / quartz);
+            } else if (instructionCode == 0b0000_0000_0000_0000) {// NOP
                 Instructions.nop();
+                runtime += (4.0 / quartz);
             }
             break;
 
@@ -138,55 +159,67 @@ public class DecodeDraft{
 
             if (destBit == 0b0000_0000_0000_0000) {// CLRW
                 Instructions.clrw();
+                runtime += (4.0 / quartz);
 
-            } else if (destBit == 0b0000_0000_1000_0000) {//CLRF
-                // TODO Instructions.clrf(fileCode);
+            } else if (destBit == 0b0000_0000_1000_0000) {// CLRF
+                Instructions.clrf(fileCode);
+                runtime += (4.0 / quartz);
 
             }
             break;
-            
-        case 0b0000_1001_0000_0000: //COMF
-            //TODO Instructions.comf(fileCode,destBit);
+
+        case 0b0000_1001_0000_0000: // COMF
+             Instructions.comf(fileCode,destBit);
+            runtime += (4.0 / quartz);
             break;
-            
-        case 0b0000_0011_0000_0000: //DECF
-            //TODO Instructions.decf(fileCode,destBit);
-            break; 
-            
-        case 0b0000_1010_0000_0000: //INCF
-            //TODO Instructions.incf(fileCode,destBit);
-            break; 
-            
-        case 0b0000_0100_0000_0000: //IORWF
-            //TODO Instructions.iorwf(fileCode,destBit);
-            break; 
-            
-        case 0b0000_0010_0000_0000: //SUBWF
-            //TODO Instructions.subwf(fileCode,destBit);
-            break; 
-            
-        case 0b0000_1110_0000_0000: //SWAPF
-            //TODO Instructions.swapf(fileCode,destBit);
-            break;  
-            
-        case 0b0000_0110_0000_0000: //XORWF
-            //TODO Instructions.xorwf(fileCode,destBit);
-            break;   
-            
-        case 0b0000_1101_0000_0000: //RLF
-            //TODO Instructions.rlf(fileCode,destBit);
-            break;   
-        case 0b0000_1100_0000_0000: //RRF
-            //TODO Instructions.rrf(fileCode,destBit);
-            break;    
+
+        case 0b0000_0011_0000_0000: // DECF
+          Instructions.decf(fileCode,destBit);
+            runtime += (4.0 / quartz);
+            break;
+
+        case 0b0000_1010_0000_0000: // INCF
+          Instructions.incf(fileCode,destBit);
+            runtime += (4.0 / quartz);
+            break;
+
+        case 0b0000_0100_0000_0000: // IORWF
+              Instructions.iorwf(fileCode,destBit);
+            runtime += (4.0 / quartz);
+            break;
+
+        case 0b0000_0010_0000_0000: // SUBWF
+             Instructions.subwf(fileCode,destBit);
+            runtime += (4.0 / quartz);
+            break;
+
+        case 0b0000_1110_0000_0000: // SWAPF
+         Instructions.swapf(fileCode,destBit);
+            runtime += (4.0 / quartz);
+            break;
+
+        case 0b0000_0110_0000_0000: // XORWF
+             Instructions.xorwf(fileCode,destBit);
+            runtime += (4.0 / quartz);
+            break;
+
+        case 0b0000_1101_0000_0000: // RLF
+            // TODO Instructions.rlf(fileCode,destBit);
+            runtime += (4.0 / quartz);
+            break;
+        case 0b0000_1100_0000_0000: // RRF
+            // TODO Instructions.rrf(fileCode,destBit);
+            runtime += (4.0 / quartz);
+            break;
         default:
 
         }
+
     }
 
     public static void bitorientated(int instructionCode) {
 
-        int opCode = instructionCode & 0b0001_1100_0000_0000;
+        int opCode = instructionCode & 0b0011_1100_0000_0000;
         int bitCode = (instructionCode & 0b0000_0011_1000_0000) >> 7;
         int fileCode = instructionCode & 0b0000_0000_0111_0000;
 
@@ -194,23 +227,28 @@ public class DecodeDraft{
 
         case 0b0001_0000_0000_0000: // BCF
             Instructions.bcf(fileCode, bitCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0001_0100_0000_0000:// BSF
             Instructions.bsf(fileCode, bitCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0001_1000_0000_0000:// BTFSC
             Instructions.btfsc(fileCode, bitCode);
+            runtime += (4.0 / quartz);
             break;
 
         case 0b0001_1100_0000_0000:// BTFSS
             Instructions.btfss(fileCode, bitCode);
+            runtime += (4.0 / quartz);
             break;
 
         default:
 
         }
+
     }
 
     public static void digitcarry(int result, int halfbyte) {
@@ -311,20 +349,4 @@ public class DecodeDraft{
 
     }
 
-    public static void runCompleteCode(long start,int quarts) {
- int lastPC =-1;
-        while (!resetValue && !(lastPC==pC_Next)) {
-            literalInstructions(execute.get(pC_Next));
-            lastPC++;
-        }
-    }
-
-    public static void do_cmd() {
-
-        literalInstructions(execute.get(pC_Next));
-    }
-
 }
-
-
-  
