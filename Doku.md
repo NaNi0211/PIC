@@ -111,6 +111,18 @@ Breakpoint für button</p>
 <p>Was passiert intern:</p>
 
 
+<h2>Befehle</h2>
+Code erstellen S.64 im Datenblatt
+<h3>Call
+Speichert den nächsten Programmzähler im Stack und springt in gewollter stelle des Programms
+</h3>
+
+
+
+
+
+BCF:
+In der Methode wird der ein Bitshift links nach bitCode als Maske erstellt der dann den bestimmten Bit im Register des Rams 0 setzt  
 
 <h2>Struktur des Projektes<h2>
 
