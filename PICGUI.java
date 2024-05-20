@@ -24,6 +24,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -32,7 +33,7 @@ import javax.swing.table.TableColumnModel;
 //add row https://www.youtube.com/watch?v=eAJphO_PHTU&t=64s
 
 public class PICGUI extends JFrame {
-    private long start =System.nanoTime();
+    private long start = System.nanoTime();
     private static int[] ra_pins = new int[8];
     private static int[] rb_pins = new int[8];
 
@@ -55,9 +56,9 @@ public class PICGUI extends JFrame {
     private JTable stack_table;
     private JTable sfr_table;
 
-    private long laufzeit = 0;
     private Thread thread;
-    private Thread thread2;
+
+    protected static double quartz = 4;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -162,7 +163,7 @@ public class PICGUI extends JFrame {
                 // gets the value from out Slider as the mouse is being clicked
                 long num3;
                 num3 = slider.getValue();
-
+                quartz = slider.getValue();
                 lbl_slider.setText(Long.toString(num3));
             }
         });
@@ -172,6 +173,7 @@ public class PICGUI extends JFrame {
                 // increases/decreases value as mouse is dragged
                 long num2;
                 num2 = slider.getValue();
+                quartz = slider.getValue();
                 lbl_slider.setText(Long.toString(num2));
 
             }
@@ -297,23 +299,23 @@ public class PICGUI extends JFrame {
 
         gpr_table = new JTable();
         gpr_table.setModel(new DefaultTableModel(
-                new Object[][] { { "0C", null }, { "0D", null }, { "0E", null }, { "0F", null },
+                new Object[][] { { "0C", "0" }, { "0D", "0" }, { "0E", "0" }, { "0F", "0" },
 
-                        { "10", null }, { "11", null }, { "12", null }, { "13", null }, { "14", null }, { "15", null },
-                        { "16", null }, { "17", null }, { "18", null }, { "19", null }, { "1A", null }, { "1B", null },
-                        { "1C", null }, { "1D", null }, { "1E", null }, { "1F", null },
+                        { "10", "0" }, { "11", "0" }, { "12", "0" }, { "13", "0" }, { "14", "0" }, { "15", "0" },
+                        { "16", "0" }, { "17", "0" }, { "18", "0" }, { "19", "0" }, { "1A", "0" }, { "1B", "0" },
+                        { "1C", "0" }, { "1D", "0" }, { "1E", "0" }, { "1F", "0" },
 
-                        { "20", null }, { "21", null }, { "22", null }, { "23", null }, { "24", null }, { "25", null },
-                        { "26", null }, { "27", null }, { "28", null }, { "29", null }, { "2A", null }, { "2B", null },
-                        { "2C", null }, { "2D", null }, { "2E", null }, { "2F", null },
+                        { "20", "0" }, { "21", "0" }, { "22", "0" }, { "23", "0" }, { "24", "0" }, { "25", "0" },
+                        { "26", "0" }, { "27", "0" }, { "28", "0" }, { "29", "0" }, { "2A", "0" }, { "2B", "0" },
+                        { "2C", "0" }, { "2D", "0" }, { "2E", "0" }, { "2F", "0" },
 
-                        { "30", null }, { "31", null }, { "32", null }, { "33", null }, { "34", null }, { "35", null },
-                        { "36", null }, { "37", null }, { "38", null }, { "39", null }, { "3A", null }, { "3B", null },
-                        { "3C", null }, { "3D", null }, { "3E", null }, { "3F", null },
+                        { "30", "0" }, { "31", "0" }, { "32", "0" }, { "33", "0" }, { "34", "0" }, { "35", "0" },
+                        { "36", "0" }, { "37", "0" }, { "38", "0" }, { "39", "0" }, { "3A", "0" }, { "3B", "0" },
+                        { "3C", "0" }, { "3D", "0" }, { "3E", "0" }, { "3F", "0" },
 
-                        { "40", null }, { "41", null }, { "42", null }, { "43", null }, { "44", null }, { "45", null },
-                        { "46", null }, { "47", null }, { "48", null }, { "49", null }, { "4A", null }, { "4B", null },
-                        { "4C", null }, { "4D", null }, { "4E", null }, { "4F", null }, },
+                        { "40", "0" }, { "41", "0" }, { "42", "0" }, { "43", "0" }, { "44", "0" }, { "45", "0" },
+                        { "46", "0" }, { "47", "0" }, { "48", "0" }, { "49", "0" }, { "4A", "0" }, { "4B", "0" },
+                        { "4C", "0" }, { "4D", "0" }, { "4E", "0" }, { "4F", "0" }, },
                 new String[] { "Addresse", "Werte HEX" }));
         scrollPane_3.setViewportView(gpr_table);
         // gpr_table.setTableHeader(null);//Header entfernen
@@ -327,19 +329,32 @@ public class PICGUI extends JFrame {
         panel_sfr.add(scrollPane_6);
 
         sfr_table = new JTable();
-        sfr_table.setModel(new DefaultTableModel(new Object[][] {
-                { "0x00", "indirect", String.valueOf(DecodeDraft.ram[0][0]), "0x00", "indirect", String.valueOf(DecodeDraft.ram[1][0]) },
-                { "0x01", "TMR 0", String.valueOf(DecodeDraft.ram[0][1]), "0x01", "Option", String.valueOf(DecodeDraft.ram[1][1]) }, 
-                { "0x02", "PCL", String.valueOf(DecodeDraft.ram[0][2]), "0x02", "PCL", String.valueOf(DecodeDraft.ram[1][2]) },
-                { "0x03", "Status", String.valueOf(DecodeDraft.ram[0][3]), "0x03", "Status", String.valueOf(DecodeDraft.ram[1][3]) }, 
-                { "0x04", "FSR", String.valueOf(DecodeDraft.ram[0][4]), "0x04", "FSR", String.valueOf(DecodeDraft.ram[1][4]) },
-                { "0x05", "Port RA", String.valueOf(DecodeDraft.ram[0][5]), "0x05", "Tris RA", String.valueOf(DecodeDraft.ram[1][5]) },
-                { "0x06", "Port RB", String.valueOf(DecodeDraft.ram[0][6]), "0x06", "Tris RB", String.valueOf(DecodeDraft.ram[1][6]) }, 
-                { "0x07", "-",String.valueOf(DecodeDraft.ram[0][7]), "0x07", "-", String.valueOf(DecodeDraft.ram[1][7]) },
-                { "0x08", "EEData", String.valueOf(DecodeDraft.ram[0][8]), "0x08", "EECon1", String.valueOf(DecodeDraft.ram[1][8]) }, 
-                { "0x09", "EEAdr", String.valueOf(DecodeDraft.ram[0][9]), "0x09", "EECon2", String.valueOf(DecodeDraft.ram[1][9]) },
-                { "0x0A", "PCLATH", String.valueOf(DecodeDraft.ram[0][10]), "0x0A", "PCLATCH", String.valueOf(DecodeDraft.ram[1][10]) },
-                { "0x0B", "INTCON", String.valueOf(DecodeDraft.ram[0][11]), "0x0B", "INTCON", String.valueOf(DecodeDraft.ram[1][11]) }, },
+        sfr_table.setModel(new DefaultTableModel(
+                new Object[][] {
+                        { "0x00", "indirect", String.valueOf(DecodeDraft.ram[0][0]), "0x00", "indirect",
+                                String.valueOf(DecodeDraft.ram[1][0]) },
+                        { "0x01", "TMR 0", String.valueOf(DecodeDraft.ram[0][1]), "0x01", "Option",
+                                String.valueOf(DecodeDraft.ram[1][1]) },
+                        { "0x02", "PCL", String.valueOf(DecodeDraft.ram[0][2]), "0x02", "PCL",
+                                String.valueOf(DecodeDraft.ram[1][2]) },
+                        { "0x03", "Status", String.valueOf(DecodeDraft.ram[0][3]), "0x03", "Status",
+                                String.valueOf(DecodeDraft.ram[1][3]) },
+                        { "0x04", "FSR", String.valueOf(DecodeDraft.ram[0][4]), "0x04", "FSR",
+                                String.valueOf(DecodeDraft.ram[1][4]) },
+                        { "0x05", "Port RA", String.valueOf(DecodeDraft.ram[0][5]), "0x05", "Tris RA",
+                                String.valueOf(DecodeDraft.ram[1][5]) },
+                        { "0x06", "Port RB", String.valueOf(DecodeDraft.ram[0][6]), "0x06", "Tris RB",
+                                String.valueOf(DecodeDraft.ram[1][6]) },
+                        { "0x07", "-", String.valueOf(DecodeDraft.ram[0][7]), "0x07", "-",
+                                String.valueOf(DecodeDraft.ram[1][7]) },
+                        { "0x08", "EEData", String.valueOf(DecodeDraft.ram[0][8]), "0x08", "EECon1",
+                                String.valueOf(DecodeDraft.ram[1][8]) },
+                        { "0x09", "EEAdr", String.valueOf(DecodeDraft.ram[0][9]), "0x09", "EECon2",
+                                String.valueOf(DecodeDraft.ram[1][9]) },
+                        { "0x0A", "PCLATH", String.valueOf(DecodeDraft.ram[0][10]), "0x0A", "PCLATCH",
+                                String.valueOf(DecodeDraft.ram[1][10]) },
+                        { "0x0B", "INTCON", String.valueOf(DecodeDraft.ram[0][11]), "0x0B", "INTCON",
+                                String.valueOf(DecodeDraft.ram[1][11]) }, },
                 new String[] { "Adresse", "Bez", "Werte Binär", "Adresse", "Bez", "Werte" }));
         scrollPane_6.setViewportView(sfr_table);
 
@@ -365,8 +380,8 @@ public class PICGUI extends JFrame {
         stack_table = new JTable();
         stack_table
                 .setModel(new DefaultTableModel(
-                        new Object[][] { { "0", null }, { "1", null }, { "2", null }, { "3", null }, { "4", null },
-                                { "5", null }, { "6", null }, { "7", null }, },
+                        new Object[][] { { "0", "0" }, { "1", "0" }, { "2", "0" }, { "3", "0" }, { "4", "0" },
+                                { "5", "0" }, { "6", "0" }, { "7", "0" }, },
                         new String[] { "Nummer", "Programmzähler" }));
         scrollPane_5.setViewportView(stack_table);
 
@@ -406,59 +421,53 @@ public class PICGUI extends JFrame {
         JButton btnRun = new JButton("Run");
         btnRun.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
                 DecodeDraft.resetValue = false;
-                thread = new Thread(() -> {
-                    
-                    while(!DecodeDraft.resetValue) {
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]), 3, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]), 4, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]), 5, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]), 6, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
-               
-                    lbw.setText(String.valueOf(DecodeDraft.wRegister));
-                    lbpc.setText(String.valueOf(DecodeDraft.pC_Current));
-                    lbpcl.setText(String.valueOf(DecodeDraft.pC_Current));
-                    // lbpclath.setText(String.valueOf(DecodeDraft.));
-                    lbc.setText(String.valueOf(DecodeDraft.carrybit));
-                    lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
-                    lbz.setText(String.valueOf(DecodeDraft.zerobit));
-                    for(int j=0;j<12;j++) {
-                        sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]),j ,2 );
-                        sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]),j ,5 );
-                    }
-                    }
-                });
-        
-                thread2 = new Thread(() -> {
-                    while(!DecodeDraft.resetValue) {
-                    lbl_laufzeit.setText(String.valueOf((System.nanoTime()-start)/1000));
-                  //  sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][0]), 1, 3);
-                    
-                
-     
-                  
-               
-            
-              
-                    }
-                });
-                laufzeit = System.nanoTime();
-              //  DecodeDraft.runCompleteCode(start);
-                thread.start();
-                thread2.start();
-                
-              
-                
-                // WErte im Stack Speichern
 
-             
-               
-             
+                thread = new Thread(() -> {
+
+                    while (!DecodeDraft.resetValue) {
+
+                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
+                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
+                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
+                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]), 3, 1);
+                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]), 4, 1);
+                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]), 5, 1);
+                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]), 6, 1);
+                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
+
+                        lbw.setText(Integer.toHexString(DecodeDraft.wRegister).toUpperCase() + "H");
+                        lbpc.setText(String.valueOf(DecodeDraft.pC_Next));
+                        lbpcl.setText(String.valueOf(DecodeDraft.pC_Next));
+                        // lbpclath.setText(String.valueOf(DecodeDraft.));
+                        lbc.setText(String.valueOf(DecodeDraft.carrybit));
+                        lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
+                        lbz.setText(String.valueOf(DecodeDraft.zerobit));
+
+                        for (int j = 0; j < 12; j++) {
+                            sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]), j, 2);
+                            sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[1][j]), j, 5);
+                        }
+                        for (int j = 12; j < 67; j++) {
+                            gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]), j - 11, 1);
+                        }
+                        lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
+
+                        DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
+
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                    }
+
+                });
+
+                thread.start();
+
+                // WErte im Stack Speichern
 
                 // System.out.println(decoder.getStack()[0]); -> 0
 
@@ -477,7 +486,8 @@ public class PICGUI extends JFrame {
         JButton btnStop = new JButton("Stop");
         btnStop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DecodeDraft.resetValue = false;
+                DecodeDraft.resetValue = true;
+
             }
         });
         btnStop.setBounds(205, 61, 89, 23);
@@ -487,7 +497,45 @@ public class PICGUI extends JFrame {
         btnStep.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DecodeDraft.resetValue = false;
-                DecodeDraft.do_cmd();
+                thread = new Thread(() -> {
+
+                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
+                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
+                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
+                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]), 3, 1);
+                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]), 4, 1);
+                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]), 5, 1);
+                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]), 6, 1);
+                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
+
+                    lbw.setText(Integer.toHexString(DecodeDraft.wRegister).toUpperCase() + "H");
+                    lbpc.setText(String.valueOf(DecodeDraft.pC_Next));
+                    lbpcl.setText(String.valueOf(DecodeDraft.pC_Next));
+                    // lbpclath.setText(String.valueOf(DecodeDraft.));
+                    lbc.setText(String.valueOf(DecodeDraft.carrybit));
+                    lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
+                    lbz.setText(String.valueOf(DecodeDraft.zerobit));
+                    for (int j = 0; j < 12; j++) {
+                        sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]), j, 2);
+                        sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[1][j]), j, 5);
+                    }
+                    for (int j = 12; j < 67; j++) {
+                        gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]), j - 11, 1);
+                    }
+                    lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
+                });
+                /*
+                 * thread2 = new Thread(() -> {
+                 * 
+                 * 
+                 * // sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][0]), 1, 3);
+                 * 
+                 * });
+                 */
+                DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
+                thread.start();
+                // thread2.start();
+
             }
         });
         btnStep.setBounds(340, 61, 89, 23);
@@ -498,26 +546,27 @@ public class PICGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // alle werte zurücksetzen
                 DecodeDraft.resetValue = true;
-                DecodeDraft.carrybit=0;
-                DecodeDraft.digitcarrybit=0;
-                DecodeDraft.pC_Current=0;
-                DecodeDraft.pC_Next=0;
-          //      Arrays.fill(DecodeDraft.EEROM, 0);
-               for(int i=0;i<DecodeDraft.ram.length;i++) {
-                   for(int j=0;j<DecodeDraft.ram[i].length;j++) {
-                       DecodeDraft.ram[i][j]=0;
-                   }
-               }
+                DecodeDraft.carrybit = 0;
+                DecodeDraft.digitcarrybit = 0;
+                DecodeDraft.pC_Current = 0;
+                DecodeDraft.pC_Next = 0;
+                // Arrays.fill(DecodeDraft.EEROM, 0);
+                for (int i = 0; i < DecodeDraft.ram.length; i++) {
+                    for (int j = 0; j < DecodeDraft.ram[i].length; j++) {
+                        DecodeDraft.ram[i][j] = 0;
+                    }
+                }
                 Arrays.fill(DecodeDraft.stack, 0);
-                DecodeDraft.rb0=0;
-                DecodeDraft.stackpointer=0;
-                DecodeDraft.wRegister=0;
-                DecodeDraft.zerobit=0;
-                laufzeit=0;
+                DecodeDraft.rb0 = 0;
+                DecodeDraft.stackpointer = 0;
+                DecodeDraft.wRegister = 0;
+                DecodeDraft.zerobit = 0;
+                DecodeDraft.runtime = 0;
+                DecodeDraft.endOfProgrammCheck = 0;
                 lbl_laufzeit.setText("0");
                 console_area.setText("0");
                 state_area.setText("0");
-                
+
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
@@ -527,6 +576,14 @@ public class PICGUI extends JFrame {
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]), 6, 1);
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
 
+                for (int j = 0; j < 12; j++) {
+                    sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]), j, 2);
+                    sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]), j, 5);
+                }
+                for (int j = 12; j < 68; j++) {
+                    gpr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]), j - 11, 1);
+                }
+
                 lbw.setText(String.valueOf(DecodeDraft.wRegister));
                 lbpc.setText(String.valueOf(DecodeDraft.pC_Current));
                 lbpcl.setText(String.valueOf(DecodeDraft.pC_Current));
@@ -534,7 +591,7 @@ public class PICGUI extends JFrame {
                 lbc.setText(String.valueOf(DecodeDraft.carrybit));
                 lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
                 lbz.setText(String.valueOf(DecodeDraft.zerobit));
-                
+
             }
         });
         btnReset.setBounds(467, 61, 89, 23);
@@ -655,7 +712,5 @@ public class PICGUI extends JFrame {
         }
 
     }
-    
-    
-    
+
 }
