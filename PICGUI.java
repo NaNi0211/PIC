@@ -502,7 +502,7 @@ public class PICGUI extends JFrame {
                         DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
 
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(100); //ansonsten zu schnell um das zu visualisieren 
                         } catch (InterruptedException e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
@@ -704,8 +704,11 @@ public class PICGUI extends JFrame {
 
     // Displayed die LST Datei in der Tabelle table_1 und extrahiert die Befehle aus
     // der LST Datei als String
-    public List<String> parse(String lstFile) {
-        List<String> codeLines = new ArrayList<>();
+    public List<DataHelper> parse(String lstFile) {
+        List<DataHelper> codeLines = new ArrayList<>();
+        DataHelper dh = new DataHelper();
+        int counter = 0;
+        //List<String> breakpoints = new ArrayList<>();
         // List<String> befehle = new ArrayList<>();
         DefaultTableModel model = (DefaultTableModel) table_1.getModel();
 
@@ -713,10 +716,15 @@ public class PICGUI extends JFrame {
             String currentLine;
 
             while ((currentLine = br.readLine()) != null) {
-                codeLines.add(currentLine);
+                
+                dh.index = counter;
+                dh.line = currentLine;
+                counter++;
+                codeLines.add(dh);
+                
                 befehle.add(currentLine.substring(5, 9));
                 // System.out.println("Current linr:" + currentLine.substring(5, 9));
-                model.addRow(new Object[] { null, null, currentLine });
+                model.addRow(new Object[] { dh.index, null, currentLine });
 
                 // TODO: System.out.println(sCurrentLine);
             }
@@ -769,6 +777,14 @@ public class PICGUI extends JFrame {
 
     }
     
+    //helper for codelines list
+    //https://stackoverflow.com/questions/13056157/java-list-with-each-element-having-2-values
+    class DataHelper{
+        String line;
+        int index;
+      }
+    
+    
     
     class ToggleCellRenderer extends DefaultTableCellRenderer {
         @Override
@@ -792,6 +808,7 @@ public class PICGUI extends JFrame {
             this.columnIndex = columnIndex;
             this.ioPinsDataA = ioPinsDataA;
             this.ioPinsDataB = ioPinsDataB;
+            if(columnIndex == 2 || columnIndex == 5) {
             button = new JButton("0"); // Set default value to "0"
             button.setBorderPainted(false);
             button.addActionListener(e -> {
@@ -816,12 +833,19 @@ public class PICGUI extends JFrame {
                 }
                 fireEditingStopped();
             });
+            } else {
+                System.out.println("Invalid column");
+            }
         }
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             this.rowIndex = row;
-            button.setText(value == null ? "0" : value.toString()); // Set default value to "0"
+            this.columnIndex = column;
+            if (column == 2 || column == 5) {
+                button.setText(value == null ? "0" : value.toString()); // Set default value to "0"
+            }
+
             return button;
         }
 
