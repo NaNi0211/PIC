@@ -1,3 +1,4 @@
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -10,8 +11,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EventObject;
 import java.util.List;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,7 +29,9 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
@@ -34,9 +39,13 @@ import javax.swing.table.TableColumnModel;
 
 public class PICGUI extends JFrame {
     private long start = System.nanoTime();
-    private static int[] ra_pins = new int[8];
-    private static int[] rb_pins = new int[8];
-
+    //private static int[] ra_pins = new int[8];
+    //private static int[] rb_pins = new int[8];
+    
+    public static int[] ioPinsDataA = new int[8];
+    public static int[] ioPinsDataB = new int[8];
+    
+    
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTable table;
@@ -231,7 +240,7 @@ public class PICGUI extends JFrame {
         //https://stackoverflow.com/questions/2452694/jtable-with-horizontal-scrollbar
         JScrollPane scrollPane_2 = new JScrollPane(table_1, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         table_1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        scrollPane_2.setBounds(39, 41, 576, 416);
+        scrollPane_2.setBounds(38, 41, 576, 416);
         panel.add(scrollPane_2);
         scrollPane_2.setViewportView(table_1);
 
@@ -412,17 +421,35 @@ public class PICGUI extends JFrame {
         scrollPane_4.setBounds(10, 11, 339, 366);
         panel_io.add(scrollPane_4);
 
+        
+        
         io_table = new JTable();
         io_table.setModel(new DefaultTableModel(
-                new Object[][] { { "0", "i", null, "0", "i", null }, { "1", "i", null, "1", "i", null },
-                        { "2", "i", null, "2", "i", null }, { "3", "i", null, "3", "i", null },
-                        { "4", "i", null, "4", "i", null }, { "5", "i", null, "5", "i", null },
-                        { "6", "i", null, "6", "i", null }, { "7", "i", null, "7", "i", null }, },
+                new Object[][] { { "0", "i", ioPinsDataA[0], "0", "i", ioPinsDataB[0] },
+                        { "1", "i", ioPinsDataA[1], "1", "i", ioPinsDataB[1] },
+                        { "2", "i", ioPinsDataA[2], "2", "i", ioPinsDataB[2] },
+                        { "3", "i", ioPinsDataA[3], "3", "i", ioPinsDataB[3] },
+                        { "4", "i", ioPinsDataA[4], "4", "i", ioPinsDataB[4] },
+                        { "5", "i", ioPinsDataA[5], "5", "i", ioPinsDataB[5] },
+                        { "6", "i", ioPinsDataA[6], "6", "i", ioPinsDataB[6] },
+                        { "7", "i", ioPinsDataA[7], "7", "i", ioPinsDataB[7] } },
                 new String[] { "RA", "Tris", "Pin", "RB", "Tris", "Pin" }));
-        scrollPane_4.setViewportView(io_table);
 
         // io_table.getColumnModel().getColumn(2).;
+        // Set custom cell renderer and editor
+        for (int i = 0; i < io_table.getColumnCount(); i++) {
+            io_table.getColumnModel().getColumn(i).setCellRenderer(new ToggleCellRenderer());
+            io_table.getColumnModel().getColumn(i).setCellEditor(new ToggleCellEditor(i, ioPinsDataA, ioPinsDataB));
+        }
+        //make ioTable visible
+        scrollPane_4.setViewportView(io_table);
+        
 
+        
+        
+        
+        
+        
         JLabel lblNewLabel_12 = new JLabel("Quartzfrequenz");
         lblNewLabel_12.setBounds(870, 45, 89, 14);
         contentPane.add(lblNewLabel_12);
@@ -647,6 +674,16 @@ public class PICGUI extends JFrame {
         // table.setModel(model);
 
     }
+    
+    public static void updateArray(int row, int column, Object value) {
+        if (column == 2) {
+            ioPinsDataA[row] = Integer.parseInt(value.toString());
+            System.out.println("Updated ioPinsDataA[" + row + "]: " + ioPinsDataA[row]);
+        } else if (column == 5) {
+            ioPinsDataB[row] = Integer.parseInt(value.toString());
+            System.out.println("Updated ioPinsDataB[" + row + "]: " + ioPinsDataB[row]);
+        }
+    }
 
     /*
      * Already covered in parse
@@ -730,6 +767,76 @@ public class PICGUI extends JFrame {
             console_area.append(intValue.toString() + "\n");
         }
 
+    }
+    
+    
+    class ToggleCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            setHorizontalAlignment(DefaultTableCellRenderer.CENTER); // Center-align the cell's text
+            setText(value == null ? "" : value.toString());
+            return this;
+        }
+    }
+
+    class ToggleCellEditor extends AbstractCellEditor implements TableCellEditor {
+        private JButton button;
+        private int rowIndex;
+        private int columnIndex;
+        private int[] ioPinsDataA;
+        private int[] ioPinsDataB;
+
+        public ToggleCellEditor(int columnIndex, int[] ioPinsDataA, int[] ioPinsDataB) {
+            this.columnIndex = columnIndex;
+            this.ioPinsDataA = ioPinsDataA;
+            this.ioPinsDataB = ioPinsDataB;
+            button = new JButton("0"); // Set default value to "0"
+            button.setBorderPainted(false);
+            button.addActionListener(e -> {
+                if (button.getText().equals("1")) {
+                    if (columnIndex == 2) {
+                        ioPinsDataA[rowIndex] = 0;
+                        System.out.println("Updated ioPinsDataA[" + rowIndex + "]: 0");
+                    } else if (columnIndex == 5) {
+                        ioPinsDataB[rowIndex] = 0;
+                        System.out.println("Updated ioPinsDataB[" + rowIndex + "]: 0");
+                    }
+                    button.setText("0");
+                } else {
+                    if (columnIndex == 2) {
+                        ioPinsDataA[rowIndex] = 1;
+                        System.out.println("Updated ioPinsDataA[" + rowIndex + "]: 1");
+                    } else if (columnIndex == 5) {
+                        ioPinsDataB[rowIndex] = 1;
+                        System.out.println("Updated ioPinsDataB[" + rowIndex + "]: 1");
+                    }
+                    button.setText("1");
+                }
+                fireEditingStopped();
+            });
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            this.rowIndex = row;
+            button.setText(value == null ? "0" : value.toString()); // Set default value to "0"
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return button.getText();
+        }
+
+        @Override
+        public boolean isCellEditable(EventObject e) {
+            if (e instanceof MouseEvent) {
+                return ((MouseEvent) e).getClickCount() >= 1;
+            }
+            return true;
+        }
     }
 
 }
