@@ -1,0 +1,67 @@
+public class JTableWithIndex extends JFrame {
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private int[] array;
+
+    public JTableWithIndex() {
+        // Initialize the array
+        array = new int[5]; // Example size
+
+        // Initialize the table model with column names
+        String[] columnNames = {"Index", "Value"};
+        Object[][] data = new Object[5][2]; // Example size
+
+        // Fill the table with initial values
+        for (int i = 0; i < 5; i++) {
+            data[i][0] = i; // Index
+            data[i][1] = 0; // Initial value
+        }
+
+        tableModel = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Only Value column is editable
+                return column == 1;
+            }
+        };
+
+        // Create the table with the model
+        table = new JTable(tableModel);
+        table.setPreferredScrollableViewportSize(new Dimension(300, 150));
+        table.setFillsViewportHeight(true);
+
+        // Add a listener to the table model to update the array when values change
+        tableModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() == TableModelEvent.UPDATE) {
+                    int row = e.getFirstRow();
+                    int column = e.getColumn();
+
+                    if (column == 1) { // If the value column is updated
+                        int newValue = (int) tableModel.getValueAt(row, column);
+                        array[row] = newValue;
+                        System.out.println("Updated array: " + java.util.Arrays.toString(array));
+                    }
+                }
+            }
+        });
+
+        // Add the table to a scroll pane
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        // Add the scroll pane to the frame
+        add(scrollPane);
+
+        // Set frame properties
+        setTitle("JTable with Index Column");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new JTableWithIndex());
+    }
+}
