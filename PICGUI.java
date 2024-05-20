@@ -210,20 +210,39 @@ public class PICGUI extends JFrame {
         scrollPane_1.setBounds(286, 435, 0, 0);
         panel.add(scrollPane_1);
 
-        JScrollPane scrollPane_2 = new JScrollPane();
-        scrollPane_2.setBounds(39, 41, 576, 416);
-        panel.add(scrollPane_2);
-
+        
+        
+        
+        
+        
+        
+        
+        
         table_1 = new JTable();
-        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "PC", "LST" }) {
+        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "PC", "" }) {
             Class[] columnTypes = new Class[] { String.class, String.class, String.class };
 
             public Class getColumnClass(int columnIndex) {
                 return columnTypes[columnIndex];
             }
         });
+        
+        //make vertical and horizontal scroll possible
+        //https://stackoverflow.com/questions/2452694/jtable-with-horizontal-scrollbar
+        JScrollPane scrollPane_2 = new JScrollPane(table_1, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        table_1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        scrollPane_2.setBounds(39, 41, 576, 416);
+        panel.add(scrollPane_2);
         scrollPane_2.setViewportView(table_1);
 
+        
+        
+        
+        
+        
+        
+        
+        
         TableColumnModel colmod = table_1.getColumnModel();
         TableColumn TC_lst = colmod.getColumn(2);
         TC_lst.setPreferredWidth(800);
