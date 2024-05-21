@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -59,7 +58,6 @@ public class PICGUI extends JFrame {
 
     private Thread thread;
     private Thread thread2;
-    private int row;
 
     protected static double quartz = 4;
 
@@ -432,9 +430,9 @@ public class PICGUI extends JFrame {
                 DecodeDraft.resetValue = false;
 
                 thread = new Thread(() -> {
-                    int resetCheck = 0;
+                   int resetCheck =0;
                     while (!DecodeDraft.resetValue) {
-                        int pcCheck = DecodeDraft.pC_Next;
+                      
                         DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
                         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
                         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
@@ -461,14 +459,8 @@ public class PICGUI extends JFrame {
                             gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11,
                                     1);
                         }
-                        if((DecodeDraft.pC_Next == pcCheck) &&( Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(0, 4)) !=Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(7, 9)))) {
-                            row++;
-                            }
-                        row += DecodeDraft.pC_Next - pcCheck;
-                        // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
-                        table_1.addRowSelectionInterval(rightRow(row), rightRow(row));
 
-                        table_1.setBackground(Color.white);
+                        
 
                         lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
                         if (isBreakpointSet(DecodeDraft.pC_Next)) {
@@ -481,7 +473,6 @@ public class PICGUI extends JFrame {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
-                        table_1.clearSelection();
                     }
 
                 });
@@ -518,10 +509,8 @@ public class PICGUI extends JFrame {
         btnStep.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DecodeDraft.resetValue = true;
-
                 thread2 = new Thread(() -> {
-                    table_1.clearSelection();
-                    int pcCheck = DecodeDraft.pC_Next;
+
                     DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
                     stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
                     stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
@@ -546,14 +535,8 @@ public class PICGUI extends JFrame {
                     for (int j = 12; j < 67; j++) {
                         gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11, 1);
                     }
-                    if((DecodeDraft.pC_Next == pcCheck) &&( Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(0, 4)) !=Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(7, 9)))) {
-                        row++;
-                        }
-                    row += DecodeDraft.pC_Next - pcCheck;
-                    // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
-                    table_1.addRowSelectionInterval(rightRow(row), rightRow(row));
+                    
                    
-                    table_1.setBackground(Color.white);
 
                     lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
 
@@ -580,9 +563,7 @@ public class PICGUI extends JFrame {
         btnReset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // alle werte zurücksetzen
-         
                 DecodeDraft.resetValue = true;
-              row=0;
                 DecodeDraft.carrybit = 0;
                 DecodeDraft.digitcarrybit = 0;
                 DecodeDraft.pC_Current = 0;
@@ -612,7 +593,7 @@ public class PICGUI extends JFrame {
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]) + "H", 5, 1);
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]) + "H", 6, 1);
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]) + "H", 7, 1);
-              
+
                 for (int j = 0; j < 12; j++) {
                     sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j, 2);
                     sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]) + "H", j, 5);
@@ -628,7 +609,7 @@ public class PICGUI extends JFrame {
                 lbc.setText(String.valueOf(DecodeDraft.carrybit));
                 lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
                 lbz.setText(String.valueOf(DecodeDraft.zerobit));
-                table_1.addRowSelectionInterval(row, row);
+
             }
         });
         btnReset.setBounds(467, 61, 89, 23);
@@ -749,32 +730,15 @@ public class PICGUI extends JFrame {
         }
 
     }
-
     private boolean isBreakpointSet(int line) {
         for (int i = 0; i < table_1.getRowCount(); i++) {
             Boolean breakpoint = (Boolean) table_1.getValueAt(i, 0);
-            String pcValue = (String) table_1.getValueAt(i, 2).toString().substring(0, 4);
-
+            String pcValue =  (String) table_1.getValueAt(i, 2).toString().substring(0, 4);
+            
             if (breakpoint != null && breakpoint && pcValue != null && Integer.parseInt(pcValue) == line) {
                 return true;
             }
         }
         return false;
-    }
-
-    private int rightRow(int line) {
-   
-        
-
-        while (row < table_1.getRowCount()) {
-            String pcValue = (String) table_1.getValueAt(row, 2).toString().substring(0, 4);
-            if (!pcValue.equals("    ")) {
-                return row;
-            }
-            row++;
-
-        
- }
-        return row;
     }
 }
