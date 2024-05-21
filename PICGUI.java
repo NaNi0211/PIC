@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -221,7 +223,7 @@ public class PICGUI extends JFrame {
         panel.add(scrollPane_1);
 
         table_1 = new JTable();
-        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "PC", "LST" }) {
+        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "PC", "" }) {
             Class[] columnTypes = new Class[] { Boolean.class, String.class, String.class };
 
             public Class getColumnClass(int columnIndex) {
@@ -233,6 +235,7 @@ public class PICGUI extends JFrame {
                 return column == 0;
             }
         });
+        
         // make vertical and horizontal scroll possible
         // https://stackoverflow.com/questions/2452694/jtable-with-horizontal-scrollbar
         JScrollPane scrollPane_2 = new JScrollPane(table_1, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -242,6 +245,11 @@ public class PICGUI extends JFrame {
         panel.add(scrollPane_2);
         scrollPane_2.setViewportView(table_1);
 
+        
+        
+        
+        
+        
         TableColumnModel colmod = table_1.getColumnModel();
         TableColumn TC_lst = colmod.getColumn(2);
         TC_lst.setPreferredWidth(800);
@@ -317,23 +325,23 @@ public class PICGUI extends JFrame {
 
         gpr_table = new JTable();
         gpr_table.setModel(new DefaultTableModel(
-                new Object[][] { { "0C", "0" }, { "0D", "0" }, { "0E", "0" }, { "0F", "0" },
+                new Object[][] { { "0x0C", "0H" }, { "0x0D", "0H" }, { "0x0E", "0H" }, { "0x0F", "0H" },
 
-                        { "10", "0" }, { "11", "0" }, { "12", "0" }, { "13", "0" }, { "14", "0" }, { "15", "0" },
-                        { "16", "0" }, { "17", "0" }, { "18", "0" }, { "19", "0" }, { "1A", "0" }, { "1B", "0" },
-                        { "1C", "0" }, { "1D", "0" }, { "1E", "0" }, { "1F", "0" },
+                        { "0x10", "0H" }, { "0x11", "0H" }, { "0x12", "0H" }, { "0x13", "0H" }, { "0x14", "0H" }, { "0x15", "0H" },
+                        { "0x16", "0H" }, { "0x17", "0H" }, { "0x18", "0H" }, { "0x19", "0H" }, { "0x1A", "0H" }, { "0x1B", "0H" },
+                        { "0x1C", "0H" }, { "0x1D", "0H" }, { "0x1E", "0H" }, { "0x1F", "0H" },
 
-                        { "20", "0" }, { "21", "0" }, { "22", "0" }, { "23", "0" }, { "24", "0" }, { "25", "0" },
-                        { "26", "0" }, { "27", "0" }, { "28", "0" }, { "29", "0" }, { "2A", "0" }, { "2B", "0" },
-                        { "2C", "0" }, { "2D", "0" }, { "2E", "0" }, { "2F", "0" },
+                        { "0x20", "0H" }, { "0x21", "0H" }, { "0x22", "0H" }, { "0x23", "0H" }, { "0x24", "0H" }, { "0x25", "0H" },
+                        { "0x26", "0H" }, { "0x27", "0H" }, { "0x28", "0H" }, { "0x29", "0H" }, { "0x2A", "0H" }, { "0x2B", "0H" },
+                        { "0x2C", "0H" }, { "0x2D", "0H" }, { "0x2E", "0H" }, { "0x2F", "0H" },
 
-                        { "30", "0" }, { "31", "0" }, { "32", "0" }, { "33", "0" }, { "34", "0" }, { "35", "0" },
-                        { "36", "0" }, { "37", "0" }, { "38", "0" }, { "39", "0" }, { "3A", "0" }, { "3B", "0" },
-                        { "3C", "0" }, { "3D", "0" }, { "3E", "0" }, { "3F", "0" },
+                        { "0x30", "0H" }, { "0x31", "0H" }, { "0x32", "0H" }, { "0x33", "0H" }, { "0x34", "0H" }, { "0x35", "0H" },
+                        { "0x36", "0H" }, { "0x37", "0H" }, { "0x38", "0H" }, { "0x39", "0H" }, { "0x3A", "0H" }, { "0x3B", "0H" },
+                        { "0x3C", "0H" }, { "0x3D", "0H" }, { "0x3E", "0H" }, { "0x3F", "0H" },
 
-                        { "40", "0" }, { "41", "0" }, { "42", "0" }, { "43", "0" }, { "44", "0" }, { "45", "0" },
-                        { "46", "0" }, { "47", "0" }, { "48", "0" }, { "49", "0" }, { "4A", "0" }, { "4B", "0" },
-                        { "4C", "0" }, { "4D", "0" }, { "4E", "0" }, { "4F", "0" }, },
+                        { "0x40", "0H" }, { "0x41", "0H" }, { "0x42", "0H" }, { "0x43", "0H" }, { "0x44", "0H" }, { "0x45", "0H" },
+                        { "0x46", "0H" }, { "0x47", "0H" }, { "0x48", "0H" }, { "0x49", "0H" }, { "0x4A", "0H" }, { "0x4B", "0H" },
+                        { "0x4C", "0H" }, { "0x4D", "0H" }, { "0x4E", "0H" }, { "0x4F", "0H" }, },
                 new String[] { "Addresse", "Werte HEX" }));
         scrollPane_3.setViewportView(gpr_table);
         // gpr_table.setTableHeader(null);//Header entfernen
@@ -687,6 +695,8 @@ public class PICGUI extends JFrame {
     // input Dateipfad der LST Datei durch den FileBtn in der GUI
     private void displayDataInTable(String filePath) {
         // readDataFromFile(filePath);
+        
+        
         parse(filePath); // displays the lst file in the table and extracts commands
         console_area.append(filePath);// eingelesene Datei in Console Ausgeben
         System.out.println("Filepath in the display to table method: " + filePath);
