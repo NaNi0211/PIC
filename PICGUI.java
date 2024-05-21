@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -11,8 +12,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EventObject;
 import java.util.List;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -27,7 +30,9 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
@@ -35,9 +40,11 @@ import javax.swing.table.TableColumnModel;
 
 public class PICGUI extends JFrame {
     private long start = System.nanoTime();
-    private static int[] ra_pins = new int[8];
-    private static int[] rb_pins = new int[8];
+    // private static int[] ra_pins = new int[8];
+    // private static int[] rb_pins = new int[8];
 
+    public static int[] ioPinsDataA = new int[8];
+    public static int[] ioPinsDataB = new int[8];
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTable table;
@@ -60,7 +67,7 @@ public class PICGUI extends JFrame {
     private Thread thread;
     private Thread thread2;
     private int row;
-
+    private int firstRow;
     protected static double quartz = 4;
 
     public static void main(String[] args) {
@@ -213,10 +220,6 @@ public class PICGUI extends JFrame {
         scrollPane_1.setBounds(286, 435, 0, 0);
         panel.add(scrollPane_1);
 
-        JScrollPane scrollPane_2 = new JScrollPane();
-        scrollPane_2.setBounds(39, 41, 576, 416);
-        panel.add(scrollPane_2);
-
         table_1 = new JTable();
         table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "PC", "LST" }) {
             Class[] columnTypes = new Class[] { Boolean.class, String.class, String.class };
@@ -230,6 +233,13 @@ public class PICGUI extends JFrame {
                 return column == 0;
             }
         });
+        // make vertical and horizontal scroll possible
+        // https://stackoverflow.com/questions/2452694/jtable-with-horizontal-scrollbar
+        JScrollPane scrollPane_2 = new JScrollPane(table_1, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        table_1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        scrollPane_2.setBounds(38, 41, 576, 416);
+        panel.add(scrollPane_2);
         scrollPane_2.setViewportView(table_1);
 
         TableColumnModel colmod = table_1.getColumnModel();
@@ -403,11 +413,21 @@ public class PICGUI extends JFrame {
 
         io_table = new JTable();
         io_table.setModel(new DefaultTableModel(
-                new Object[][] { { "0", "i", null, "0", "i", null }, { "1", "i", null, "1", "i", null },
-                        { "2", "i", null, "2", "i", null }, { "3", "i", null, "3", "i", null },
-                        { "4", "i", null, "4", "i", null }, { "5", "i", null, "5", "i", null },
-                        { "6", "i", null, "6", "i", null }, { "7", "i", null, "7", "i", null }, },
+                new Object[][] { { "0", "i", ioPinsDataA[0], "0", "i", ioPinsDataB[0] },
+                        { "1", "i", ioPinsDataA[1], "1", "i", ioPinsDataB[1] },
+                        { "2", "i", ioPinsDataA[2], "2", "i", ioPinsDataB[2] },
+                        { "3", "i", ioPinsDataA[3], "3", "i", ioPinsDataB[3] },
+                        { "4", "i", ioPinsDataA[4], "4", "i", ioPinsDataB[4] },
+                        { "5", "i", ioPinsDataA[5], "5", "i", ioPinsDataB[5] },
+                        { "6", "i", ioPinsDataA[6], "6", "i", ioPinsDataB[6] },
+                        { "7", "i", ioPinsDataA[7], "7", "i", ioPinsDataB[7] } },
                 new String[] { "RA", "Tris", "Pin", "RB", "Tris", "Pin" }));
+        // Set custom cell renderer and editor
+        for (int i = 0; i < io_table.getColumnCount(); i++) {
+            io_table.getColumnModel().getColumn(i).setCellRenderer(new ToggleCellRenderer());
+            io_table.getColumnModel().getColumn(i).setCellEditor(new ToggleCellEditor(i, ioPinsDataA, ioPinsDataB));
+        }
+        // make ioTable visible
         scrollPane_4.setViewportView(io_table);
 
         // io_table.getColumnModel().getColumn(2).;
@@ -432,8 +452,9 @@ public class PICGUI extends JFrame {
                 DecodeDraft.resetValue = false;
 
                 thread = new Thread(() -> {
-                    int resetCheck = 0;
+
                     while (!DecodeDraft.resetValue) {
+                        table_1.clearSelection();
                         int pcCheck = DecodeDraft.pC_Next;
                         DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
                         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
@@ -461,9 +482,11 @@ public class PICGUI extends JFrame {
                             gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11,
                                     1);
                         }
-                        if((DecodeDraft.pC_Next == pcCheck) &&( Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(0, 4)) !=Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(7, 9)))) {
+                        if ((DecodeDraft.pC_Next == pcCheck)
+                                && (Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(0, 4)) != Integer
+                                        .parseInt(table_1.getValueAt(row, 2).toString().substring(7, 9)))) {
                             row++;
-                            }
+                        }
                         row += DecodeDraft.pC_Next - pcCheck;
                         // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
                         table_1.addRowSelectionInterval(rightRow(row), rightRow(row));
@@ -481,7 +504,7 @@ public class PICGUI extends JFrame {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
-                        table_1.clearSelection();
+                       
                     }
 
                 });
@@ -546,13 +569,15 @@ public class PICGUI extends JFrame {
                     for (int j = 12; j < 67; j++) {
                         gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11, 1);
                     }
-                    if((DecodeDraft.pC_Next == pcCheck) &&( Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(0, 4)) !=Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(7, 9)))) {
+                    if ((DecodeDraft.pC_Next == pcCheck)
+                            && (Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(0, 4)) != Integer
+                                    .parseInt(table_1.getValueAt(row, 2).toString().substring(7, 9)))) {
                         row++;
-                        }
+                    }
                     row += DecodeDraft.pC_Next - pcCheck;
                     // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
                     table_1.addRowSelectionInterval(rightRow(row), rightRow(row));
-                   
+
                     table_1.setBackground(Color.white);
 
                     lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
@@ -575,14 +600,19 @@ public class PICGUI extends JFrame {
         });
         btnStep.setBounds(340, 61, 89, 23);
         contentPane.add(btnStep);
-
+        for(ActionListener al:btnStop.getActionListeners() ) {
+            al.actionPerformed(null);
+        }
+     
         JButton btnReset = new JButton("Reset");
         btnReset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // alle werte zurücksetzen
-         
+              
                 DecodeDraft.resetValue = true;
-              row=0;
+                table_1.clearSelection();
+                row = 0;
+                rightRow(0);
                 DecodeDraft.carrybit = 0;
                 DecodeDraft.digitcarrybit = 0;
                 DecodeDraft.pC_Current = 0;
@@ -612,7 +642,7 @@ public class PICGUI extends JFrame {
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]) + "H", 5, 1);
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]) + "H", 6, 1);
                 stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]) + "H", 7, 1);
-              
+
                 for (int j = 0; j < 12; j++) {
                     sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j, 2);
                     sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]) + "H", j, 5);
@@ -666,6 +696,15 @@ public class PICGUI extends JFrame {
 
     }
 
+    public static void updateArray(int row, int column, Object value) {
+        if (column == 2) {
+            ioPinsDataA[row] = Integer.parseInt(value.toString());
+            System.out.println("Updated ioPinsDataA[" + row + "]: " + ioPinsDataA[row]);
+        } else if (column == 5) {
+            ioPinsDataB[row] = Integer.parseInt(value.toString());
+            System.out.println("Updated ioPinsDataB[" + row + "]: " + ioPinsDataB[row]);
+        }
+    }
     /*
      * Already covered in parse
      * 
@@ -750,6 +789,84 @@ public class PICGUI extends JFrame {
 
     }
 
+    class ToggleCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            setHorizontalAlignment(DefaultTableCellRenderer.CENTER); // Center-align the cell's text
+            setText(value == null ? "" : value.toString());
+            return this;
+        }
+    }
+
+    class ToggleCellEditor extends AbstractCellEditor implements TableCellEditor {
+        private JButton button;
+        private int rowIndex;
+        private int columnIndex;
+        private int[] ioPinsDataA;
+        private int[] ioPinsDataB;
+
+        public ToggleCellEditor(int columnIndex, int[] ioPinsDataA, int[] ioPinsDataB) {
+            this.columnIndex = columnIndex;
+            this.ioPinsDataA = ioPinsDataA;
+            this.ioPinsDataB = ioPinsDataB;
+            if (columnIndex == 2 || columnIndex == 5) {
+                button = new JButton("0"); // Set default value to "0"
+                button.setBorderPainted(false);
+                button.addActionListener(e -> {
+                    if (button.getText().equals("1")) {
+                        if (columnIndex == 2) {
+                            ioPinsDataA[rowIndex] = 0;
+                            System.out.println("Updated ioPinsDataA[" + rowIndex + "]: 0");
+                        } else if (columnIndex == 5) {
+                            ioPinsDataB[rowIndex] = 0;
+                            System.out.println("Updated ioPinsDataB[" + rowIndex + "]: 0");
+                        }
+                        button.setText("0");
+                    } else {
+                        if (columnIndex == 2) {
+                            ioPinsDataA[rowIndex] = 1;
+                            System.out.println("Updated ioPinsDataA[" + rowIndex + "]: 1");
+                        } else if (columnIndex == 5) {
+                            ioPinsDataB[rowIndex] = 1;
+                            System.out.println("Updated ioPinsDataB[" + rowIndex + "]: 1");
+                        }
+                        button.setText("1");
+                    }
+                    fireEditingStopped();
+                });
+            } else {
+                System.out.println("Invalid column");
+            }
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+                int column) {
+            this.rowIndex = row;
+            this.columnIndex = column;
+            if (column == 2 || column == 5) {
+                button.setText(value == null ? "0" : value.toString()); // Set default value to "0"
+            }
+
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return button.getText();
+        }
+
+        @Override
+        public boolean isCellEditable(EventObject e) {
+            if (e instanceof MouseEvent) {
+                return ((MouseEvent) e).getClickCount() >= 1;
+            }
+            return true;
+        }
+    }
+
     private boolean isBreakpointSet(int line) {
         for (int i = 0; i < table_1.getRowCount(); i++) {
             Boolean breakpoint = (Boolean) table_1.getValueAt(i, 0);
@@ -763,18 +880,18 @@ public class PICGUI extends JFrame {
     }
 
     private int rightRow(int line) {
-   
-        
 
         while (row < table_1.getRowCount()) {
             String pcValue = (String) table_1.getValueAt(row, 2).toString().substring(0, 4);
             if (!pcValue.equals("    ")) {
+                if (DecodeDraft.pC_Next == 1) {
+                    firstRow = row;
+                }
                 return row;
             }
             row++;
 
-        
- }
+        }
         return row;
     }
 }
