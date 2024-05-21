@@ -449,6 +449,7 @@ public class PICGUI extends JFrame {
         JButton btnRun = new JButton("Run");
         btnRun.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                DecodeDraft.resetValue = true;
                 DecodeDraft.resetValue = false;
 
                 thread = new Thread(() -> {
@@ -489,7 +490,8 @@ public class PICGUI extends JFrame {
                         }
                         row += DecodeDraft.pC_Next - pcCheck;
                         // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
-                        table_1.addRowSelectionInterval(rightRow(row), rightRow(row));
+                        rightRow(row);
+                        table_1.addRowSelectionInterval(row, row);
 
                         table_1.setBackground(Color.white);
 
@@ -576,7 +578,8 @@ public class PICGUI extends JFrame {
                     }
                     row += DecodeDraft.pC_Next - pcCheck;
                     // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
-                    table_1.addRowSelectionInterval(rightRow(row), rightRow(row));
+                    rightRow(row);
+                    table_1.addRowSelectionInterval(row, row);
 
                     table_1.setBackground(Color.white);
 
@@ -740,7 +743,8 @@ public class PICGUI extends JFrame {
 
                 // TODO: System.out.println(sCurrentLine);
             }
-
+            rightRow(row);
+            table_1.addRowSelectionInterval(row, row);
             convertHexToInt(befehle);
             // liest eingelesene Integer List Befehle ein und übergibt diese der internen
             // List von DecodeDraft
