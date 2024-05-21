@@ -492,8 +492,8 @@ public class PICGUI extends JFrame {
                                     1);
                         }
                         if ((DecodeDraft.pC_Next == pcCheck)
-                                && (Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(0, 4)) != Integer
-                                        .parseInt(table_1.getValueAt(row, 2).toString().substring(7, 9)))) {
+                                && (Integer.parseInt(table_1.getValueAt(row, 1).toString().substring(0, 4),16) != Integer
+                                        .parseInt(table_1.getValueAt(row, 1).toString().substring(7, 9),16))) {
                             row++;
                         }
                         row += DecodeDraft.pC_Next - pcCheck;
@@ -580,8 +580,8 @@ public class PICGUI extends JFrame {
                         gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11, 1);
                     }
                     if ((DecodeDraft.pC_Next == pcCheck)
-                            && (Integer.parseInt(table_1.getValueAt(row, 2).toString().substring(0, 4)) != Integer
-                                    .parseInt(table_1.getValueAt(row, 2).toString().substring(7, 9)))) {
+                            && (Integer.parseInt(table_1.getValueAt(row, 1).toString().substring(0, 4),16) != Integer
+                                    .parseInt(table_1.getValueAt(row, 1).toString().substring(7, 9),16))) {
                         row++;
                     }
                     row += DecodeDraft.pC_Next - pcCheck;
