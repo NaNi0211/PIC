@@ -7,3 +7,11 @@ private int rightRow(int pc) {
     }
     return -1;
 }
+row += DecodeDraft.pC_Next - pcCheck;
+        row = rightRow(DecodeDraft.pC_Next);
+
+        // Markiere die Zeile in der Tabelle
+        if (row >= 0) {
+            table_1.addRowSelectionInterval(row, row);
+            table_1.scrollRectToVisible(table_1.getCellRect(row, 0, true));
+        }
