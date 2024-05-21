@@ -5,7 +5,7 @@
 Datei löschen nach einsesen von anderer Datei
 
 
-
+RunButton mehrmals drücken
 
  DecodeDraft m = new DecodeDraft();
 
