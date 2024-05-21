@@ -41,6 +41,7 @@ import javax.swing.table.TableColumnModel;
 //add row https://www.youtube.com/watch?v=eAJphO_PHTU&t=64s
 
 public class PICGUI extends JFrame {
+    
     private long start = System.nanoTime();
     // private static int[] ra_pins = new int[8];
     // private static int[] rb_pins = new int[8];
@@ -71,7 +72,13 @@ public class PICGUI extends JFrame {
     private int row;
     private int firstRow;
     protected static double quartz = 4;
-
+private JLabel lbw;
+private JLabel lbc;
+private JLabel lbpc;
+private JLabel lbdc;
+private JLabel lbz;
+private JLabel lbpcl;
+private JLabel lbl_laufzeit;
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -143,6 +150,7 @@ public class PICGUI extends JFrame {
         JButton btnFile = new JButton("File");
         btnFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            reset();
                 JFileChooser fileChooser = new JFileChooser();
                 int result = fileChooser.showOpenDialog(contentPane);
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -197,7 +205,7 @@ public class PICGUI extends JFrame {
         lblNewLabel_1.setBounds(947, 65, 46, 14);
         contentPane.add(lblNewLabel_1);
 
-        JLabel lbl_laufzeit = new JLabel("0");
+         lbl_laufzeit = new JLabel("0");
         lbl_laufzeit.setBounds(1072, 65, 99, 14);
         contentPane.add(lbl_laufzeit);
 
@@ -244,6 +252,8 @@ public class PICGUI extends JFrame {
         scrollPane_2.setBounds(38, 41, 576, 416);
         panel.add(scrollPane_2);
         scrollPane_2.setViewportView(table_1);
+        scrollPane_2.setAutoscrolls(true);
+        scrollPane_2.setViewportView(table_1);
 
         TableColumnModel colmod = table_1.getColumnModel();
         TableColumn TC_lst = colmod.getColumn(1);
@@ -277,16 +287,16 @@ public class PICGUI extends JFrame {
         lblNewLabel_10.setBounds(629, 191, 14, 14);
         panel.add(lblNewLabel_10);
 
-        JLabel lbw = new JLabel("0");
+         lbw = new JLabel("0");
 
         lbw.setBounds(704, 41, 46, 14);
         panel.add(lbw);
 
-        JLabel lbpc = new JLabel("0");
+         lbpc = new JLabel("0");
         lbpc.setBounds(704, 66, 46, 14);
         panel.add(lbpc);
 
-        JLabel lbpcl = new JLabel("0");
+         lbpcl = new JLabel("0");
         lbpcl.setBounds(704, 91, 36, 14);
         panel.add(lbpcl);
 
@@ -294,15 +304,15 @@ public class PICGUI extends JFrame {
         lbpclath.setBounds(704, 116, 46, 14);
         panel.add(lbpclath);
 
-        JLabel lbc = new JLabel("0");
+         lbc = new JLabel("0");
         lbc.setBounds(704, 141, 17, 14);
         panel.add(lbc);
 
-        JLabel lbdc = new JLabel("0");
+         lbdc = new JLabel("0");
         lbdc.setBounds(704, 166, 14, 14);
         panel.add(lbdc);
 
-        JLabel lbz = new JLabel("0");
+        lbz = new JLabel("0");
         lbz.setBounds(704, 191, 14, 14);
         panel.add(lbz);
 
@@ -491,16 +501,19 @@ public class PICGUI extends JFrame {
                             gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11,
                                     1);
                         }
-                        if ((DecodeDraft.pC_Next == pcCheck)
-                                && (Integer.parseInt(table_1.getValueAt(row, 1).toString().substring(0, 4),16) != Integer
-                                        .parseInt(table_1.getValueAt(row, 1).toString().substring(7, 9),16))) {
+                        if ((DecodeDraft.pC_Next == pcCheck) && (Integer.parseInt(
+                                table_1.getValueAt(row, 1).toString().substring(0, 4),
+                                16) != Integer.parseInt(table_1.getValueAt(row, 1).toString().substring(7, 9), 16))) {
                             row++;
                         }
-                        row += DecodeDraft.pC_Next - pcCheck;
-                        // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
-                        rightRow(row);
-                        table_1.addRowSelectionInterval(row, row);
 
+                        row = rightRow(DecodeDraft.pC_Next);
+
+                        // Markiere die Zeile in der Tabelle
+                        if (row >= 0) {
+                            table_1.addRowSelectionInterval(row, row);
+                            // table_1.scrollRectToVisible(table_1.getCellRect(row, 1, true));
+                        }
                         table_1.setBackground(Color.white);
 
                         lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
@@ -579,20 +592,20 @@ public class PICGUI extends JFrame {
                     for (int j = 12; j < 67; j++) {
                         gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11, 1);
                     }
-                    if ((DecodeDraft.pC_Next == pcCheck)
-                            && (Integer.parseInt(table_1.getValueAt(row, 1).toString().substring(0, 4),16) != Integer
-                                    .parseInt(table_1.getValueAt(row, 1).toString().substring(7, 9),16))) {
-                        row++;
-                    }
                     row += DecodeDraft.pC_Next - pcCheck;
-                    // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
-                    rightRow(row);
-                    table_1.addRowSelectionInterval(row, row);
+                    row = rightRow(DecodeDraft.pC_Next);
+
+                    // Markiere die Zeile in der Tabelle
+                    if (row >= 0) {
+                        table_1.addRowSelectionInterval(row, row);
+                        // table_1.scrollRectToVisible(table_1.getCellRect(row, 1, true));
+                    }
 
                     table_1.setBackground(Color.white);
 
                     lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
 
+                    // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
                 });
 
                 /*
@@ -622,8 +635,8 @@ public class PICGUI extends JFrame {
 
                 DecodeDraft.resetValue = true;
                 table_1.clearSelection();
-                row = 0;
-                rightRow(0);
+                row = firstRow;
+
                 DecodeDraft.carrybit = 0;
                 DecodeDraft.digitcarrybit = 0;
                 DecodeDraft.pC_Current = 0;
@@ -695,7 +708,8 @@ public class PICGUI extends JFrame {
     // input Dateipfad der LST Datei durch den FileBtn in der GUI
     private void displayDataInTable(String filePath) {
         // readDataFromFile(filePath);
-
+        
+        
         parse(filePath); // displays the lst file in the table and extracts commands
         console_area.append(filePath);// eingelesene Datei in Console Ausgeben
         System.out.println("Filepath in the display to table method: " + filePath);
@@ -707,7 +721,62 @@ public class PICGUI extends JFrame {
         // table.setModel(model);
 
     }
+    public void reset() {
 
+        DecodeDraft.resetValue = true;
+        befehleInteger.clear();
+        befehle.clear();
+        table_1.clearSelection();
+        row = firstRow;
+
+        DecodeDraft.carrybit = 0;
+        DecodeDraft.digitcarrybit = 0;
+        DecodeDraft.pC_Current = 0;
+        DecodeDraft.pC_Next = 0;
+        // Arrays.fill(DecodeDraft.EEROM, 0);
+        for (int i = 0; i < DecodeDraft.ram.length; i++) {
+            for (int j = 0; j < DecodeDraft.ram[i].length; j++) {
+                DecodeDraft.ram[i][j] = 0;
+            }
+        }
+        Arrays.fill(DecodeDraft.stack, 0);
+        DecodeDraft.rb0 = 0;
+        DecodeDraft.stackpointer = 0;
+        DecodeDraft.wRegister = 0;
+        DecodeDraft.zerobit = 0;
+        DecodeDraft.runtime = 0;
+        DecodeDraft.endOfProgrammCheck = 0;
+        lbl_laufzeit.setText("0");
+        console_area.setText("0");
+        state_area.setText("0");
+
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]) + "H", 0, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]) + "H", 1, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]) + "H", 2, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]) + "H", 3, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]) + "H", 4, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]) + "H", 5, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]) + "H", 6, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]) + "H", 7, 1);
+
+        for (int j = 0; j < 12; j++) {
+            sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j, 2);
+            sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]) + "H", j, 5);
+        }
+        for (int j = 12; j < 68; j++) {
+            gpr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j - 11, 1);
+        }
+
+        lbw.setText(String.valueOf(DecodeDraft.wRegister) + "H");
+        lbpc.setText(String.valueOf(DecodeDraft.pC_Current));
+        lbpcl.setText(String.valueOf(DecodeDraft.pC_Current));
+        // lbpclath.setText(String.valueOf(DecodeDraft.));
+        lbc.setText(String.valueOf(DecodeDraft.carrybit));
+        lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
+        lbz.setText(String.valueOf(DecodeDraft.zerobit));
+      //  table_1.addRowSelectionInterval(row, row);
+    }
+    
     public static void updateArray(int row, int column, Object value) {
         if (column == 2) {
             ioPinsDataA[row] = Integer.parseInt(value.toString());
@@ -737,13 +806,11 @@ public class PICGUI extends JFrame {
     // Displayed die LST Datei in der Tabelle table_1 und extrahiert die Befehle aus
     // der LST Datei als String
     public List<String> parse(String lstFile) {
-        DefaultTableModel model= (DefaultTableModel) table_1.getModel();
+        DefaultTableModel model = (DefaultTableModel) table_1.getModel();
         model.setRowCount(0);
         List<String> codeLines = new ArrayList<>();
         // List<String> befehle = new ArrayList<>();
-      
-       
-       
+
         try (BufferedReader br = new BufferedReader(new FileReader(lstFile))) {
             String currentLine;
 
@@ -755,14 +822,14 @@ public class PICGUI extends JFrame {
 
                 // TODO: System.out.println(sCurrentLine);
             }
-            if(model.getRowCount()>0) {
-            rightRow(row);
+
+            row = rightRow(DecodeDraft.pC_Next);
             table_1.addRowSelectionInterval(row, row);
-            }
+
             convertHexToInt(befehle);
             // liest eingelesene Integer List Befehle ein und übergibt diese der internen
             // List von DecodeDraft
-            DecodeDraft.setup_with_LSTcode(befehleInteger);
+            DecodeDraft.execute=befehleInteger;
             System.out.println("lst");
 
         } catch (IOException e) {
@@ -898,18 +965,16 @@ public class PICGUI extends JFrame {
     }
 
     private int rightRow(int line) {
-
-        while (row < table_1.getRowCount()) {
-            String pcValue = (String) table_1.getValueAt(row, 1).toString().substring(0, 4);
-            if (!pcValue.equals("    ")) {
-                if (DecodeDraft.pC_Next == 1) {
-                    firstRow = row;
+        for (int i = 0; i < table_1.getRowCount(); i++) {
+            String pcValue = (String) table_1.getValueAt(i, 1).toString().substring(0, 4);
+            if (pcValue.trim().length() > 0 && Integer.parseInt(pcValue, 16) == line) {
+                if (line == 0) {
+                    firstRow = i;
                 }
-                return row;
+                return i;
             }
-            row++;
-
         }
-        return row;
+        return -1;
     }
+
 }
