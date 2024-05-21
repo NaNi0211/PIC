@@ -721,6 +721,7 @@ public class PICGUI extends JFrame {
 
         ArrayList<Integer> debug = befehleInteger;
 
+
         // Elemente printen
         for (Integer element : befehleInteger) {
             System.out.println("Dezimalwert: " + element);
