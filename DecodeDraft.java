@@ -22,6 +22,9 @@ public class DecodeDraft extends PICGUI {
     static int[] stack = new int[8];
     static int stackpointer;
     static int carrybit;
+
+
+    
     static int digitcarrybit;
     static int zerobit;
     static int rb0;
