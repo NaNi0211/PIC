@@ -65,7 +65,7 @@ public class PICGUI extends JFrame {
     private JTable io_table;
     private JTable stack_table;
     private JTable sfr_table;
-
+    private int skipFirst = 0;
     private Thread thread;
     private Thread thread2;
     private int row;
@@ -223,8 +223,8 @@ public class PICGUI extends JFrame {
         panel.add(scrollPane_1);
 
         table_1 = new JTable();
-        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "PC", "" }) {
-            Class[] columnTypes = new Class[] { Boolean.class, String.class, String.class };
+        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "" }) {
+            Class[] columnTypes = new Class[] { Boolean.class, String.class };
 
             public Class getColumnClass(int columnIndex) {
                 return columnTypes[columnIndex];
@@ -235,7 +235,7 @@ public class PICGUI extends JFrame {
                 return column == 0;
             }
         });
-        
+
         // make vertical and horizontal scroll possible
         // https://stackoverflow.com/questions/2452694/jtable-with-horizontal-scrollbar
         JScrollPane scrollPane_2 = new JScrollPane(table_1, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -245,13 +245,8 @@ public class PICGUI extends JFrame {
         panel.add(scrollPane_2);
         scrollPane_2.setViewportView(table_1);
 
-        
-        
-        
-        
-        
         TableColumnModel colmod = table_1.getColumnModel();
-        TableColumn TC_lst = colmod.getColumn(2);
+        TableColumn TC_lst = colmod.getColumn(1);
         TC_lst.setPreferredWidth(800);
 
         JLabel lblNewLabel_4 = new JLabel("W:");
@@ -324,25 +319,30 @@ public class PICGUI extends JFrame {
         panel_gpr.add(scrollPane_3);
 
         gpr_table = new JTable();
-        gpr_table.setModel(new DefaultTableModel(
-                new Object[][] { { "0x0C", "0H" }, { "0x0D", "0H" }, { "0x0E", "0H" }, { "0x0F", "0H" },
+        gpr_table
+                .setModel(new DefaultTableModel(
+                        new Object[][] { { "0x0C", "0H" }, { "0x0D", "0H" }, { "0x0E", "0H" }, { "0x0F", "0H" },
 
-                        { "0x10", "0H" }, { "0x11", "0H" }, { "0x12", "0H" }, { "0x13", "0H" }, { "0x14", "0H" }, { "0x15", "0H" },
-                        { "0x16", "0H" }, { "0x17", "0H" }, { "0x18", "0H" }, { "0x19", "0H" }, { "0x1A", "0H" }, { "0x1B", "0H" },
-                        { "0x1C", "0H" }, { "0x1D", "0H" }, { "0x1E", "0H" }, { "0x1F", "0H" },
+                                { "0x10", "0H" }, { "0x11", "0H" }, { "0x12", "0H" }, { "0x13", "0H" },
+                                { "0x14", "0H" }, { "0x15", "0H" }, { "0x16", "0H" }, { "0x17", "0H" },
+                                { "0x18", "0H" }, { "0x19", "0H" }, { "0x1A", "0H" }, { "0x1B", "0H" },
+                                { "0x1C", "0H" }, { "0x1D", "0H" }, { "0x1E", "0H" }, { "0x1F", "0H" },
 
-                        { "0x20", "0H" }, { "0x21", "0H" }, { "0x22", "0H" }, { "0x23", "0H" }, { "0x24", "0H" }, { "0x25", "0H" },
-                        { "0x26", "0H" }, { "0x27", "0H" }, { "0x28", "0H" }, { "0x29", "0H" }, { "0x2A", "0H" }, { "0x2B", "0H" },
-                        { "0x2C", "0H" }, { "0x2D", "0H" }, { "0x2E", "0H" }, { "0x2F", "0H" },
+                                { "0x20", "0H" }, { "0x21", "0H" }, { "0x22", "0H" }, { "0x23", "0H" },
+                                { "0x24", "0H" }, { "0x25", "0H" }, { "0x26", "0H" }, { "0x27", "0H" },
+                                { "0x28", "0H" }, { "0x29", "0H" }, { "0x2A", "0H" }, { "0x2B", "0H" },
+                                { "0x2C", "0H" }, { "0x2D", "0H" }, { "0x2E", "0H" }, { "0x2F", "0H" },
 
-                        { "0x30", "0H" }, { "0x31", "0H" }, { "0x32", "0H" }, { "0x33", "0H" }, { "0x34", "0H" }, { "0x35", "0H" },
-                        { "0x36", "0H" }, { "0x37", "0H" }, { "0x38", "0H" }, { "0x39", "0H" }, { "0x3A", "0H" }, { "0x3B", "0H" },
-                        { "0x3C", "0H" }, { "0x3D", "0H" }, { "0x3E", "0H" }, { "0x3F", "0H" },
+                                { "0x30", "0H" }, { "0x31", "0H" }, { "0x32", "0H" }, { "0x33", "0H" },
+                                { "0x34", "0H" }, { "0x35", "0H" }, { "0x36", "0H" }, { "0x37", "0H" },
+                                { "0x38", "0H" }, { "0x39", "0H" }, { "0x3A", "0H" }, { "0x3B", "0H" },
+                                { "0x3C", "0H" }, { "0x3D", "0H" }, { "0x3E", "0H" }, { "0x3F", "0H" },
 
-                        { "0x40", "0H" }, { "0x41", "0H" }, { "0x42", "0H" }, { "0x43", "0H" }, { "0x44", "0H" }, { "0x45", "0H" },
-                        { "0x46", "0H" }, { "0x47", "0H" }, { "0x48", "0H" }, { "0x49", "0H" }, { "0x4A", "0H" }, { "0x4B", "0H" },
-                        { "0x4C", "0H" }, { "0x4D", "0H" }, { "0x4E", "0H" }, { "0x4F", "0H" }, },
-                new String[] { "Addresse", "Werte HEX" }));
+                                { "0x40", "0H" }, { "0x41", "0H" }, { "0x42", "0H" }, { "0x43", "0H" },
+                                { "0x44", "0H" }, { "0x45", "0H" }, { "0x46", "0H" }, { "0x47", "0H" },
+                                { "0x48", "0H" }, { "0x49", "0H" }, { "0x4A", "0H" }, { "0x4B", "0H" },
+                                { "0x4C", "0H" }, { "0x4D", "0H" }, { "0x4E", "0H" }, { "0x4F", "0H" }, },
+                        new String[] { "Addresse", "Werte HEX" }));
         scrollPane_3.setViewportView(gpr_table);
         // gpr_table.setTableHeader(null);//Header entfernen
 
@@ -514,7 +514,7 @@ public class PICGUI extends JFrame {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
-                       
+
                     }
 
                 });
@@ -611,15 +611,15 @@ public class PICGUI extends JFrame {
         });
         btnStep.setBounds(340, 61, 89, 23);
         contentPane.add(btnStep);
-        for(ActionListener al:btnStop.getActionListeners() ) {
+        for (ActionListener al : btnStop.getActionListeners()) {
             al.actionPerformed(null);
         }
-     
+
         JButton btnReset = new JButton("Reset");
         btnReset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // alle werte zurücksetzen
-              
+
                 DecodeDraft.resetValue = true;
                 table_1.clearSelection();
                 row = 0;
@@ -695,8 +695,7 @@ public class PICGUI extends JFrame {
     // input Dateipfad der LST Datei durch den FileBtn in der GUI
     private void displayDataInTable(String filePath) {
         // readDataFromFile(filePath);
-        
-        
+
         parse(filePath); // displays the lst file in the table and extracts commands
         console_area.append(filePath);// eingelesene Datei in Console Ausgeben
         System.out.println("Filepath in the display to table method: " + filePath);
@@ -738,10 +737,13 @@ public class PICGUI extends JFrame {
     // Displayed die LST Datei in der Tabelle table_1 und extrahiert die Befehle aus
     // der LST Datei als String
     public List<String> parse(String lstFile) {
+        DefaultTableModel model= (DefaultTableModel) table_1.getModel();
+        model.setRowCount(0);
         List<String> codeLines = new ArrayList<>();
         // List<String> befehle = new ArrayList<>();
-        DefaultTableModel model = (DefaultTableModel) table_1.getModel();
-
+      
+       
+       
         try (BufferedReader br = new BufferedReader(new FileReader(lstFile))) {
             String currentLine;
 
@@ -749,12 +751,14 @@ public class PICGUI extends JFrame {
                 codeLines.add(currentLine);
                 befehle.add(currentLine.substring(5, 9));
                 // System.out.println("Current linr:" + currentLine.substring(5, 9));
-                model.addRow(new Object[] { Boolean.FALSE, null, currentLine });
+                model.addRow(new Object[] { Boolean.FALSE, currentLine });
 
                 // TODO: System.out.println(sCurrentLine);
             }
+            if(model.getRowCount()>0) {
             rightRow(row);
             table_1.addRowSelectionInterval(row, row);
+            }
             convertHexToInt(befehle);
             // liest eingelesene Integer List Befehle ein und übergibt diese der internen
             // List von DecodeDraft
@@ -884,7 +888,7 @@ public class PICGUI extends JFrame {
     private boolean isBreakpointSet(int line) {
         for (int i = 0; i < table_1.getRowCount(); i++) {
             Boolean breakpoint = (Boolean) table_1.getValueAt(i, 0);
-            String pcValue = (String) table_1.getValueAt(i, 2).toString().substring(0, 4);
+            String pcValue = (String) table_1.getValueAt(i, 1).toString().substring(0, 4);
 
             if (breakpoint != null && breakpoint && pcValue != null && Integer.parseInt(pcValue) == line) {
                 return true;
@@ -896,7 +900,7 @@ public class PICGUI extends JFrame {
     private int rightRow(int line) {
 
         while (row < table_1.getRowCount()) {
-            String pcValue = (String) table_1.getValueAt(row, 2).toString().substring(0, 4);
+            String pcValue = (String) table_1.getValueAt(row, 1).toString().substring(0, 4);
             if (!pcValue.equals("    ")) {
                 if (DecodeDraft.pC_Next == 1) {
                     firstRow = row;
