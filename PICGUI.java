@@ -4,8 +4,6 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -22,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -30,8 +29,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
@@ -41,7 +40,7 @@ import javax.swing.table.TableColumnModel;
 //add row https://www.youtube.com/watch?v=eAJphO_PHTU&t=64s
 
 public class PICGUI extends JFrame {
-    
+
     private long start = System.nanoTime();
     // private static int[] ra_pins = new int[8];
     // private static int[] rb_pins = new int[8];
@@ -72,13 +71,14 @@ public class PICGUI extends JFrame {
     private int row;
     private int firstRow;
     protected static double quartz = 4;
-private JLabel lbw;
-private JLabel lbc;
-private JLabel lbpc;
-private JLabel lbdc;
-private JLabel lbz;
-private JLabel lbpcl;
-private JLabel lbl_laufzeit;
+    private JLabel lbw;
+    private JLabel lbc;
+    private JLabel lbpc;
+    private JLabel lbdc;
+    private JLabel lbz;
+    private JLabel lbpcl;
+    private JLabel lbl_laufzeit;
+
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -150,15 +150,34 @@ private JLabel lbl_laufzeit;
         JButton btnFile = new JButton("File");
         btnFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            reset();
+                String filePath = "";
+                boolean loop;
+                newFileReset();
+
                 JFileChooser fileChooser = new JFileChooser();
-                int result = fileChooser.showOpenDialog(contentPane);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                    System.out.println("Datei wurde gefunden:" + filePath);
-                    displayDataInTable(filePath);
-                }
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("LST files", "LST");
+                fileChooser.setFileFilter(filter);
+                // fileChooser.setAcceptAllFileFilterUsed(false);
+                do {
+                    loop = false;
+                    int result = fileChooser.showOpenDialog(contentPane);
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        filePath = fileChooser.getSelectedFile().getAbsolutePath();
+                        System.out.println("Datei wurde gefunden:" + filePath);
+                        if (filePath.endsWith(".LST")) {
+
+                            displayDataInTable(filePath);
+                        } else {
+                            loop = true;
+                            JOptionPane.showMessageDialog(null, "Es muss eine LST-Datei geladen werden!", "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+
+                        }
+
+                    }
+                } while (!filePath.endsWith(".LST") && loop);
             }
+
         });
         toolBar.add(btnFile);
 
@@ -205,7 +224,7 @@ private JLabel lbl_laufzeit;
         lblNewLabel_1.setBounds(947, 65, 46, 14);
         contentPane.add(lblNewLabel_1);
 
-         lbl_laufzeit = new JLabel("0");
+        lbl_laufzeit = new JLabel("0");
         lbl_laufzeit.setBounds(1072, 65, 99, 14);
         contentPane.add(lbl_laufzeit);
 
@@ -231,8 +250,10 @@ private JLabel lbl_laufzeit;
         panel.add(scrollPane_1);
 
         table_1 = new JTable();
-        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "" }) {
-            Class[] columnTypes = new Class[] { Boolean.class, String.class };
+        table_1.setModel(new DefaultTableModel(new Object[][] {},
+                new String[] { "BP", "PC", "HEX_INSTR", "ROW", "INSTRUCTION/COMMENTS" }) {
+            Class[] columnTypes = new Class[] { Boolean.class, String.class, String.class, String.class,
+                    String.class };
 
             public Class getColumnClass(int columnIndex) {
                 return columnTypes[columnIndex];
@@ -256,8 +277,17 @@ private JLabel lbl_laufzeit;
         scrollPane_2.setViewportView(table_1);
 
         TableColumnModel colmod = table_1.getColumnModel();
+        TableColumn TC_0st = colmod.getColumn(0);
+        TC_0st.setPreferredWidth(30);
         TableColumn TC_lst = colmod.getColumn(1);
-        TC_lst.setPreferredWidth(800);
+        TC_lst.setPreferredWidth(35);
+        TableColumn TC_2st = colmod.getColumn(2);
+        TC_2st.setPreferredWidth(70);
+        TableColumn TC_3st = colmod.getColumn(3);
+        TC_3st.setPreferredWidth(50);
+        TableColumn TC_4st = colmod.getColumn(4);
+        TC_4st.setPreferredWidth(550);
+        
 
         JLabel lblNewLabel_4 = new JLabel("W:");
         lblNewLabel_4.setBounds(629, 41, 36, 14);
@@ -287,16 +317,16 @@ private JLabel lbl_laufzeit;
         lblNewLabel_10.setBounds(629, 191, 14, 14);
         panel.add(lblNewLabel_10);
 
-         lbw = new JLabel("0");
+        lbw = new JLabel("0");
 
         lbw.setBounds(704, 41, 46, 14);
         panel.add(lbw);
 
-         lbpc = new JLabel("0");
+        lbpc = new JLabel("0");
         lbpc.setBounds(704, 66, 46, 14);
         panel.add(lbpc);
 
-         lbpcl = new JLabel("0");
+        lbpcl = new JLabel("0");
         lbpcl.setBounds(704, 91, 36, 14);
         panel.add(lbpcl);
 
@@ -304,11 +334,11 @@ private JLabel lbl_laufzeit;
         lbpclath.setBounds(704, 116, 46, 14);
         panel.add(lbpclath);
 
-         lbc = new JLabel("0");
+        lbc = new JLabel("0");
         lbc.setBounds(704, 141, 17, 14);
         panel.add(lbc);
 
-         lbdc = new JLabel("0");
+        lbdc = new JLabel("0");
         lbdc.setBounds(704, 166, 14, 14);
         panel.add(lbdc);
 
@@ -473,50 +503,7 @@ private JLabel lbl_laufzeit;
                 thread = new Thread(() -> {
 
                     while (!DecodeDraft.resetValue) {
-                        table_1.clearSelection();
-                        int pcCheck = DecodeDraft.pC_Next;
-                        DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
-                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
-                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
-                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
-                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]), 3, 1);
-                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]), 4, 1);
-                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]), 5, 1);
-                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]), 6, 1);
-                        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
-
-                        lbw.setText(Integer.toHexString(DecodeDraft.wRegister).toUpperCase() + "H");
-                        lbpc.setText(String.valueOf(DecodeDraft.pC_Next));
-                        lbpcl.setText(String.valueOf(DecodeDraft.pC_Next));
-                        // lbpclath.setText(String.valueOf(DecodeDraft.));
-                        lbc.setText(String.valueOf(DecodeDraft.carrybit));
-                        lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
-                        lbz.setText(String.valueOf(DecodeDraft.zerobit));
-
-                        for (int j = 0; j < 12; j++) {
-                            sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j, 2);
-                            sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[1][j]).toUpperCase() + "H", j, 5);
-                        }
-                        for (int j = 12; j < 67; j++) {
-                            gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11,
-                                    1);
-                        }
-                        if ((DecodeDraft.pC_Next == pcCheck) && (Integer.parseInt(
-                                table_1.getValueAt(row, 1).toString().substring(0, 4),
-                                16) != Integer.parseInt(table_1.getValueAt(row, 1).toString().substring(7, 9), 16))) {
-                            row++;
-                        }
-
-                        row = rightRow(DecodeDraft.pC_Next);
-
-                        // Markiere die Zeile in der Tabelle
-                        if (row >= 0) {
-                            table_1.addRowSelectionInterval(row, row);
-                            // table_1.scrollRectToVisible(table_1.getCellRect(row, 1, true));
-                        }
-                        table_1.setBackground(Color.white);
-
-                        lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
+                        run_N_Step();
                         if (isBreakpointSet(DecodeDraft.pC_Next)) {
                             DecodeDraft.resetValue = true;
                             break;
@@ -527,7 +514,7 @@ private JLabel lbl_laufzeit;
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
-
+                        table_1.scrollRectToVisible(table_1.getCellRect(row + 1, 0, true));
                     }
 
                 });
@@ -566,46 +553,18 @@ private JLabel lbl_laufzeit;
                 DecodeDraft.resetValue = true;
 
                 thread2 = new Thread(() -> {
-                    table_1.clearSelection();
-                    int pcCheck = DecodeDraft.pC_Next;
-                    DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]), 3, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]), 4, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]), 5, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]), 6, 1);
-                    stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
 
-                    lbw.setText(Integer.toHexString(DecodeDraft.wRegister).toUpperCase() + "H");
-                    lbpc.setText(String.valueOf(DecodeDraft.pC_Next));
-                    lbpcl.setText(String.valueOf(DecodeDraft.pC_Next));
-                    // lbpclath.setText(String.valueOf(DecodeDraft.));
-                    lbc.setText(String.valueOf(DecodeDraft.carrybit));
-                    lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
-                    lbz.setText(String.valueOf(DecodeDraft.zerobit));
-                    for (int j = 0; j < 12; j++) {
-                        sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j, 2);
-                        sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[1][j]).toUpperCase() + "H", j, 5);
-                    }
-                    for (int j = 12; j < 67; j++) {
-                        gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11, 1);
-                    }
-                    row += DecodeDraft.pC_Next - pcCheck;
-                    row = rightRow(DecodeDraft.pC_Next);
-
-                    // Markiere die Zeile in der Tabelle
-                    if (row >= 0) {
-                        table_1.addRowSelectionInterval(row, row);
-                        // table_1.scrollRectToVisible(table_1.getCellRect(row, 1, true));
-                    }
-
-                    table_1.setBackground(Color.white);
-
-                    lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
+                    run_N_Step();
 
                     // https://www.tutorialspoint.com/how-to-highlight-a-row-in-a-table-with-java-swing
+
+                    try {
+                        thread.sleep(100);
+                    } catch (InterruptedException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                    table_1.scrollRectToVisible(table_1.getCellRect(row + 1, 0, true));
                 });
 
                 /*
@@ -624,65 +583,17 @@ private JLabel lbl_laufzeit;
         });
         btnStep.setBounds(340, 61, 89, 23);
         contentPane.add(btnStep);
-        for (ActionListener al : btnStop.getActionListeners()) {
-            al.actionPerformed(null);
-        }
+        /*
+         * for (ActionListener al : btnStop.getActionListeners()) {
+         * al.actionPerformed(null); }
+         */
 
         JButton btnReset = new JButton("Reset");
         btnReset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // alle werte zurücksetzen
 
-                DecodeDraft.resetValue = true;
-                table_1.clearSelection();
-                row = firstRow;
-
-                DecodeDraft.carrybit = 0;
-                DecodeDraft.digitcarrybit = 0;
-                DecodeDraft.pC_Current = 0;
-                DecodeDraft.pC_Next = 0;
-                // Arrays.fill(DecodeDraft.EEROM, 0);
-                for (int i = 0; i < DecodeDraft.ram.length; i++) {
-                    for (int j = 0; j < DecodeDraft.ram[i].length; j++) {
-                        DecodeDraft.ram[i][j] = 0;
-                    }
-                }
-                Arrays.fill(DecodeDraft.stack, 0);
-                DecodeDraft.rb0 = 0;
-                DecodeDraft.stackpointer = 0;
-                DecodeDraft.wRegister = 0;
-                DecodeDraft.zerobit = 0;
-                DecodeDraft.runtime = 0;
-                DecodeDraft.endOfProgrammCheck = 0;
-                lbl_laufzeit.setText("0");
-                console_area.setText("0");
-                state_area.setText("0");
-
-                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]) + "H", 0, 1);
-                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]) + "H", 1, 1);
-                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]) + "H", 2, 1);
-                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]) + "H", 3, 1);
-                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]) + "H", 4, 1);
-                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]) + "H", 5, 1);
-                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]) + "H", 6, 1);
-                stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]) + "H", 7, 1);
-
-                for (int j = 0; j < 12; j++) {
-                    sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j, 2);
-                    sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]) + "H", j, 5);
-                }
-                for (int j = 12; j < 68; j++) {
-                    gpr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j - 11, 1);
-                }
-
-                lbw.setText(String.valueOf(DecodeDraft.wRegister) + "H");
-                lbpc.setText(String.valueOf(DecodeDraft.pC_Current));
-                lbpcl.setText(String.valueOf(DecodeDraft.pC_Current));
-                // lbpclath.setText(String.valueOf(DecodeDraft.));
-                lbc.setText(String.valueOf(DecodeDraft.carrybit));
-                lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
-                lbz.setText(String.valueOf(DecodeDraft.zerobit));
-                table_1.addRowSelectionInterval(row, row);
+                reset();
             }
         });
         btnReset.setBounds(467, 61, 89, 23);
@@ -708,8 +619,7 @@ private JLabel lbl_laufzeit;
     // input Dateipfad der LST Datei durch den FileBtn in der GUI
     private void displayDataInTable(String filePath) {
         // readDataFromFile(filePath);
-        
-        
+
         parse(filePath); // displays the lst file in the table and extracts commands
         console_area.append(filePath);// eingelesene Datei in Console Ausgeben
         System.out.println("Filepath in the display to table method: " + filePath);
@@ -721,7 +631,103 @@ private JLabel lbl_laufzeit;
         // table.setModel(model);
 
     }
+
+    public void run_N_Step() {
+        table_1.clearSelection();
+        int pcCheck = DecodeDraft.pC_Next;
+        DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]), 3, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]), 4, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]), 5, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]), 6, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
+
+        lbw.setText(Integer.toHexString(DecodeDraft.wRegister).toUpperCase() + "H");
+        lbpc.setText(String.valueOf(DecodeDraft.pC_Next));
+        lbpcl.setText(String.valueOf(DecodeDraft.pC_Next));
+        // lbpclath.setText(String.valueOf(DecodeDraft.));
+        lbc.setText(String.valueOf(DecodeDraft.carrybit));
+        lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
+        lbz.setText(String.valueOf(DecodeDraft.zerobit));
+
+        for (int j = 0; j < 12; j++) {
+            sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j, 2);
+            sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[1][j]).toUpperCase() + "H", j, 5);
+        }
+        for (int j = 12; j < 67; j++) {
+            gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11, 1);
+        }
+        row += DecodeDraft.pC_Next - pcCheck;
+        row = rightRow(DecodeDraft.pC_Next);
+
+        // Markiere die Zeile in der Tabelle
+        if (row >= 0) {
+            table_1.addRowSelectionInterval(row, row);
+
+        }
+        table_1.setBackground(Color.white);
+
+        lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
+    }
+
     public void reset() {
+        DecodeDraft.resetValue = true;
+        table_1.clearSelection();
+        row = firstRow;
+
+        DecodeDraft.carrybit = 0;
+        DecodeDraft.digitcarrybit = 0;
+        DecodeDraft.pC_Current = 0;
+        DecodeDraft.pC_Next = 0;
+        // Arrays.fill(DecodeDraft.EEROM, 0);
+        for (int i = 0; i < DecodeDraft.ram.length; i++) {
+            for (int j = 0; j < DecodeDraft.ram[i].length; j++) {
+                DecodeDraft.ram[i][j] = 0;
+            }
+        }
+        Arrays.fill(DecodeDraft.stack, 0);
+        DecodeDraft.rb0 = 0;
+        DecodeDraft.stackpointer = 0;
+        DecodeDraft.wRegister = 0;
+        DecodeDraft.zerobit = 0;
+        DecodeDraft.runtime = 0;
+        DecodeDraft.endOfProgrammCheck = 0;
+        lbl_laufzeit.setText("0");
+        console_area.setText("0");
+        state_area.setText("0");
+
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]) + "H", 0, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]) + "H", 1, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]) + "H", 2, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[3]) + "H", 3, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[4]) + "H", 4, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[5]) + "H", 5, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[6]) + "H", 6, 1);
+        stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]) + "H", 7, 1);
+
+        for (int j = 0; j < 12; j++) {
+            sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j, 2);
+            sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]) + "H", j, 5);
+        }
+        for (int j = 12; j < 68; j++) {
+            gpr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j - 11, 1);
+        }
+
+        lbw.setText(String.valueOf(DecodeDraft.wRegister) + "H");
+        lbpc.setText(String.valueOf(DecodeDraft.pC_Current));
+        lbpcl.setText(String.valueOf(DecodeDraft.pC_Current));
+        // lbpclath.setText(String.valueOf(DecodeDraft.));
+        lbc.setText(String.valueOf(DecodeDraft.carrybit));
+        lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
+        lbz.setText(String.valueOf(DecodeDraft.zerobit));
+        table_1.addRowSelectionInterval(row, row);
+        table_1.scrollRectToVisible(table_1.getCellRect(row, 0, true));
+    }
+
+    public void newFileReset() {
 
         DecodeDraft.resetValue = true;
         befehleInteger.clear();
@@ -774,9 +780,9 @@ private JLabel lbl_laufzeit;
         lbc.setText(String.valueOf(DecodeDraft.carrybit));
         lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
         lbz.setText(String.valueOf(DecodeDraft.zerobit));
-      //  table_1.addRowSelectionInterval(row, row);
+        // table_1.addRowSelectionInterval(row, row);
     }
-    
+
     public static void updateArray(int row, int column, Object value) {
         if (column == 2) {
             ioPinsDataA[row] = Integer.parseInt(value.toString());
@@ -808,28 +814,53 @@ private JLabel lbl_laufzeit;
     public List<String> parse(String lstFile) {
         DefaultTableModel model = (DefaultTableModel) table_1.getModel();
         model.setRowCount(0);
+        // Wieso codeLines
         List<String> codeLines = new ArrayList<>();
         // List<String> befehle = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(lstFile))) {
             String currentLine;
-
+            String pc="";
+            String hexCode="";
+            String progRow="";
+            String instr="";
+            
             while ((currentLine = br.readLine()) != null) {
+               
+                if (currentLine.substring(0, 4).length() > 0) {
+                    pc = currentLine.substring(0, 4);
+                } 
+                if (currentLine.substring(5, 9).length() > 0) {
+                    hexCode = currentLine.substring(5, 9);
+                }
+                
+                if (currentLine.substring(20, 25).length() > 0) {
+                    progRow = currentLine.substring(10, 25).trim();
+                } 
+               
+                if (currentLine.substring(25, currentLine.length() ).length() > 0) {
+                    instr =currentLine.substring(25,  currentLine.length() );
+                } 
+               
+                
                 codeLines.add(currentLine);
                 befehle.add(currentLine.substring(5, 9));
                 // System.out.println("Current linr:" + currentLine.substring(5, 9));
-                model.addRow(new Object[] { Boolean.FALSE, currentLine });
+
+                model.addRow(new Object[] { Boolean.FALSE,pc, hexCode,
+                        progRow,
+                        instr});
 
                 // TODO: System.out.println(sCurrentLine);
             }
 
             row = rightRow(DecodeDraft.pC_Next);
             table_1.addRowSelectionInterval(row, row);
-
+            table_1.scrollRectToVisible(table_1.getCellRect(row, 1, true));
             convertHexToInt(befehle);
             // liest eingelesene Integer List Befehle ein und übergibt diese der internen
             // List von DecodeDraft
-            DecodeDraft.execute=befehleInteger;
+            DecodeDraft.execute = befehleInteger;
             System.out.println("lst");
 
         } catch (IOException e) {
