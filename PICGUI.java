@@ -31,7 +31,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -82,7 +81,8 @@ public class PICGUI extends JFrame {
     private JLabel lbl_laufzeit;
     private int runCounter;
     private String filePath = "";
-    private  JFileChooser fileChooser = new JFileChooser();
+    private JFileChooser fileChooser = new JFileChooser();
+
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -154,29 +154,23 @@ public class PICGUI extends JFrame {
         JButton btnFile = new JButton("File");
         btnFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-               
-               
-                boolean loop;
-                
 
-                
-               
-               
+                boolean loop;
+
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("LST-Datei", "LST");
                 fileChooser.setFileFilter(filter);
-             
-               
+
                 do {
-                  
+
                     loop = false;
                     int result = fileChooser.showOpenDialog(contentPane);
                     if (result == JFileChooser.APPROVE_OPTION) {
 
                         filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                        
+
                         System.out.println("Datei wurde gefunden:" + filePath);
                         if (filePath.endsWith(".LST")) {
-                            
+
                             displayDataInTable(filePath);
                         } else {
                             loop = true;
@@ -187,9 +181,8 @@ public class PICGUI extends JFrame {
 
                     }
                 } while (!filePath.endsWith(".LST") && loop);
-               
+
             }
-            
 
         });
         toolBar.add(btnFile);
@@ -366,7 +359,7 @@ public class PICGUI extends JFrame {
         panel_gpr.setLayout(null);
 
         JScrollPane scrollPane_3 = new JScrollPane();
-        scrollPane_3.setBounds(10, 11, 339, 366);
+        scrollPane_3.setBounds(10, 42, 339, 335);
         panel_gpr.add(scrollPane_3);
 
         gpr_table = new JTable();
@@ -381,6 +374,16 @@ public class PICGUI extends JFrame {
             gpr_table.setValueAt("0H", i - 140, 3);
         }
         scrollPane_3.setViewportView(gpr_table);
+
+        JLabel lblNewLabel_2 = new JLabel("Bank 0");
+        lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lblNewLabel_2.setBounds(74, 17, 46, 14);
+        panel_gpr.add(lblNewLabel_2);
+
+        JLabel lblNewLabel_14 = new JLabel("Bank 1");
+        lblNewLabel_14.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lblNewLabel_14.setBounds(231, 17, 46, 14);
+        panel_gpr.add(lblNewLabel_14);
         // gpr_table.setTableHeader(null);//Header entfernen
 
         JPanel panel_sfr = new JPanel();
@@ -388,7 +391,7 @@ public class PICGUI extends JFrame {
         panel_sfr.setLayout(null);
 
         JScrollPane scrollPane_6 = new JScrollPane();
-        scrollPane_6.setBounds(10, 11, 339, 224);
+        scrollPane_6.setBounds(10, 41, 339, 224);
         panel_sfr.add(scrollPane_6);
 
         sfr_table = new JTable();
@@ -423,12 +426,12 @@ public class PICGUI extends JFrame {
 
         JLabel lblNewLabel = new JLabel("Bank 0");
         lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblNewLabel.setBounds(73, 246, 46, 14);
+        lblNewLabel.setBounds(69, 16, 46, 14);
         panel_sfr.add(lblNewLabel);
 
         JLabel lblNewLabel_11 = new JLabel("Bank 1");
         lblNewLabel_11.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblNewLabel_11.setBounds(245, 246, 46, 14);
+        lblNewLabel_11.setBounds(236, 16, 46, 14);
         panel_sfr.add(lblNewLabel_11);
 
         JPanel panel_stack = new JPanel();
@@ -502,12 +505,12 @@ public class PICGUI extends JFrame {
                     while (!DecodeDraft.resetValue) {
                         run_N_Step();
                         if (isBreakpointSet(DecodeDraft.pC_Next)) {
-                            runCounter=0;
+                            runCounter = 0;
                             DecodeDraft.resetValue = true;
                             break;
                         }
                         try {
-                            Thread.sleep( 400/slider.getValue());
+                            Thread.sleep(400 / slider.getValue());
                         } catch (InterruptedException e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
@@ -1062,17 +1065,17 @@ public class PICGUI extends JFrame {
         for (int i = 0; i < table_1.getRowCount(); i++) {
             Boolean breakpoint = (Boolean) table_1.getValueAt(i, 0);
             String pcValue = (String) table_1.getValueAt(i, 1).toString().substring(0, 4);
-try {
-            if (breakpoint != null && breakpoint && pcValue != null && Integer.parseInt(pcValue, 16) == line) {
-                return true;
+            try {
+                if (breakpoint != null && breakpoint && pcValue != null && Integer.parseInt(pcValue, 16) == line) {
+                    return true;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Wähle ein Breakpoint bei dem sich auch ein Befehl befindet! ",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                table_1.setValueAt(false, i, 0);
+                reset();
+                return false;
             }
-} catch (NumberFormatException e) {
-    JOptionPane.showMessageDialog(null, "Wähle ein Breakpoint bei dem sich auch ein Befehl befindet! ", "Error",
-            JOptionPane.ERROR_MESSAGE);
-    table_1.setValueAt(false, i, 0);
-    reset();
-    return false;
-}
         }
         return false;
     }
@@ -1089,5 +1092,4 @@ try {
         }
         return -1;
     }
-
 }
