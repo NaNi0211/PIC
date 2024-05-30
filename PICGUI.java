@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -78,7 +80,9 @@ public class PICGUI extends JFrame {
     private JLabel lbz;
     private JLabel lbpcl;
     private JLabel lbl_laufzeit;
-
+    private int runCounter;
+    private String filePath = "";
+    private  JFileChooser fileChooser = new JFileChooser();
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -150,22 +154,29 @@ public class PICGUI extends JFrame {
         JButton btnFile = new JButton("File");
         btnFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String filePath = "";
+               
+               
                 boolean loop;
-                newFileReset();
+                
 
-                JFileChooser fileChooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("LST files", "LST");
+                
+               
+               
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("LST-Datei", "LST");
                 fileChooser.setFileFilter(filter);
-                // fileChooser.setAcceptAllFileFilterUsed(false);
+             
+               
                 do {
+                  
                     loop = false;
                     int result = fileChooser.showOpenDialog(contentPane);
                     if (result == JFileChooser.APPROVE_OPTION) {
+
                         filePath = fileChooser.getSelectedFile().getAbsolutePath();
+                        
                         System.out.println("Datei wurde gefunden:" + filePath);
                         if (filePath.endsWith(".LST")) {
-
+                            
                             displayDataInTable(filePath);
                         } else {
                             loop = true;
@@ -176,7 +187,9 @@ public class PICGUI extends JFrame {
 
                     }
                 } while (!filePath.endsWith(".LST") && loop);
+               
             }
+            
 
         });
         toolBar.add(btnFile);
@@ -250,10 +263,9 @@ public class PICGUI extends JFrame {
         panel.add(scrollPane_1);
 
         table_1 = new JTable();
-        table_1.setModel(new DefaultTableModel(new Object[][] {},
-                new String[] { "BP", "PC", "HEX_INSTR", "ROW", "INSTRUCTION/COMMENTS" }) {
-            Class[] columnTypes = new Class[] { Boolean.class, String.class, String.class, String.class,
-                    String.class };
+        table_1.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "BP", "PC", "HEX_INSTR", "ROW",
+                "INSTRUCTION/COMMENTS                                                   " }) {
+            Class[] columnTypes = new Class[] { Boolean.class, String.class, String.class, String.class, String.class };
 
             public Class getColumnClass(int columnIndex) {
                 return columnTypes[columnIndex];
@@ -287,7 +299,6 @@ public class PICGUI extends JFrame {
         TC_3st.setPreferredWidth(50);
         TableColumn TC_4st = colmod.getColumn(4);
         TC_4st.setPreferredWidth(550);
-        
 
         JLabel lblNewLabel_4 = new JLabel("W:");
         lblNewLabel_4.setBounds(629, 41, 36, 14);
@@ -317,7 +328,7 @@ public class PICGUI extends JFrame {
         lblNewLabel_10.setBounds(629, 191, 14, 14);
         panel.add(lblNewLabel_10);
 
-        lbw = new JLabel("0");
+        lbw = new JLabel("0H");
 
         lbw.setBounds(704, 41, 46, 14);
         panel.add(lbw);
@@ -359,30 +370,16 @@ public class PICGUI extends JFrame {
         panel_gpr.add(scrollPane_3);
 
         gpr_table = new JTable();
-        gpr_table
-                .setModel(new DefaultTableModel(
-                        new Object[][] { { "0x0C", "0H" }, { "0x0D", "0H" }, { "0x0E", "0H" }, { "0x0F", "0H" },
-
-                                { "0x10", "0H" }, { "0x11", "0H" }, { "0x12", "0H" }, { "0x13", "0H" },
-                                { "0x14", "0H" }, { "0x15", "0H" }, { "0x16", "0H" }, { "0x17", "0H" },
-                                { "0x18", "0H" }, { "0x19", "0H" }, { "0x1A", "0H" }, { "0x1B", "0H" },
-                                { "0x1C", "0H" }, { "0x1D", "0H" }, { "0x1E", "0H" }, { "0x1F", "0H" },
-
-                                { "0x20", "0H" }, { "0x21", "0H" }, { "0x22", "0H" }, { "0x23", "0H" },
-                                { "0x24", "0H" }, { "0x25", "0H" }, { "0x26", "0H" }, { "0x27", "0H" },
-                                { "0x28", "0H" }, { "0x29", "0H" }, { "0x2A", "0H" }, { "0x2B", "0H" },
-                                { "0x2C", "0H" }, { "0x2D", "0H" }, { "0x2E", "0H" }, { "0x2F", "0H" },
-
-                                { "0x30", "0H" }, { "0x31", "0H" }, { "0x32", "0H" }, { "0x33", "0H" },
-                                { "0x34", "0H" }, { "0x35", "0H" }, { "0x36", "0H" }, { "0x37", "0H" },
-                                { "0x38", "0H" }, { "0x39", "0H" }, { "0x3A", "0H" }, { "0x3B", "0H" },
-                                { "0x3C", "0H" }, { "0x3D", "0H" }, { "0x3E", "0H" }, { "0x3F", "0H" },
-
-                                { "0x40", "0H" }, { "0x41", "0H" }, { "0x42", "0H" }, { "0x43", "0H" },
-                                { "0x44", "0H" }, { "0x45", "0H" }, { "0x46", "0H" }, { "0x47", "0H" },
-                                { "0x48", "0H" }, { "0x49", "0H" }, { "0x4A", "0H" }, { "0x4B", "0H" },
-                                { "0x4C", "0H" }, { "0x4D", "0H" }, { "0x4E", "0H" }, { "0x4F", "0H" }, },
-                        new String[] { "Addresse", "Werte HEX" }));
+        gpr_table.setModel(new DefaultTableModel(new Object[68][4],
+                new String[] { "Addresse", "Werte HEX", "Addresse", "Werte HEX" }));
+        for (int i = 12; i < 80; i++) {
+            gpr_table.setValueAt("0x" + String.format("%02X", i).toUpperCase(), i - 12, 0);
+            gpr_table.setValueAt("0H", i - 12, 1);
+        }
+        for (int i = 140; i < 208; i++) {
+            gpr_table.setValueAt("0x" + String.format("%02X", i).toUpperCase(), i - 140, 2);
+            gpr_table.setValueAt("0H", i - 140, 3);
+        }
         scrollPane_3.setViewportView(gpr_table);
         // gpr_table.setTableHeader(null);//Header entfernen
 
@@ -397,30 +394,30 @@ public class PICGUI extends JFrame {
         sfr_table = new JTable();
         sfr_table.setModel(new DefaultTableModel(
                 new Object[][] {
-                        { "0x00", "indirect", String.valueOf(DecodeDraft.ram[0][0]), "0x00", "indirect",
-                                String.valueOf(DecodeDraft.ram[1][0]) },
-                        { "0x01", "TMR 0", String.valueOf(DecodeDraft.ram[0][1]), "0x01", "Option",
-                                String.valueOf(DecodeDraft.ram[1][1]) },
-                        { "0x02", "PCL", String.valueOf(DecodeDraft.ram[0][2]), "0x02", "PCL",
-                                String.valueOf(DecodeDraft.ram[1][2]) },
-                        { "0x03", "Status", String.valueOf(DecodeDraft.ram[0][3]), "0x03", "Status",
-                                String.valueOf(DecodeDraft.ram[1][3]) },
-                        { "0x04", "FSR", String.valueOf(DecodeDraft.ram[0][4]), "0x04", "FSR",
-                                String.valueOf(DecodeDraft.ram[1][4]) },
-                        { "0x05", "Port RA", String.valueOf(DecodeDraft.ram[0][5]), "0x05", "Tris RA",
-                                String.valueOf(DecodeDraft.ram[1][5]) },
-                        { "0x06", "Port RB", String.valueOf(DecodeDraft.ram[0][6]), "0x06", "Tris RB",
-                                String.valueOf(DecodeDraft.ram[1][6]) },
-                        { "0x07", "-", String.valueOf(DecodeDraft.ram[0][7]), "0x07", "-",
-                                String.valueOf(DecodeDraft.ram[1][7]) },
-                        { "0x08", "EEData", String.valueOf(DecodeDraft.ram[0][8]), "0x08", "EECon1",
-                                String.valueOf(DecodeDraft.ram[1][8]) },
-                        { "0x09", "EEAdr", String.valueOf(DecodeDraft.ram[0][9]), "0x09", "EECon2",
-                                String.valueOf(DecodeDraft.ram[1][9]) },
-                        { "0x0A", "PCLATH", String.valueOf(DecodeDraft.ram[0][10]), "0x0A", "PCLATCH",
-                                String.valueOf(DecodeDraft.ram[1][10]) },
-                        { "0x0B", "INTCON", String.valueOf(DecodeDraft.ram[0][11]), "0x0B", "INTCON",
-                                String.valueOf(DecodeDraft.ram[1][11]) }, },
+                        { "0x00", "indirect", String.valueOf(DecodeDraft.ram[0][0]) + "H", "0x00", "indirect",
+                                String.valueOf(DecodeDraft.ram[0][0]) + "H" },
+                        { "0x01", "TMR 0", String.valueOf(DecodeDraft.ram[0][1]) + "H", "0x01", "Option",
+                                String.valueOf(DecodeDraft.ram[1][1]) + "H" },
+                        { "0x02", "PCL", String.valueOf(DecodeDraft.ram[0][2]) + "H", "0x02", "PCL",
+                                String.valueOf(DecodeDraft.ram[0][2]) + "H" },
+                        { "0x03", "Status", String.valueOf(DecodeDraft.ram[0][3]) + "H", "0x03", "Status",
+                                String.valueOf(DecodeDraft.ram[0][3]) + "H" },
+                        { "0x04", "FSR", String.valueOf(DecodeDraft.ram[0][4]) + "H", "0x04", "FSR",
+                                String.valueOf(DecodeDraft.ram[0][4]) + "H" },
+                        { "0x05", "Port RA", String.valueOf(DecodeDraft.ram[0][5]) + "H", "0x05", "Tris RA",
+                                String.valueOf(DecodeDraft.ram[1][5]) + "H" },
+                        { "0x06", "Port RB", String.valueOf(DecodeDraft.ram[0][6]) + "H", "0x06", "Tris RB",
+                                String.valueOf(DecodeDraft.ram[1][6]) + "H" },
+                        { "0x07", "-", String.valueOf(DecodeDraft.ram[0][7]) + "H", "0x07", "-",
+                                String.valueOf(DecodeDraft.ram[0][7]) + "H" },
+                        { "0x08", "EEData", String.valueOf(DecodeDraft.ram[0][8]) + "H", "0x08", "EECon1",
+                                String.valueOf(DecodeDraft.ram[1][8]) + "H" },
+                        { "0x09", "EEAdr", String.valueOf(DecodeDraft.ram[0][9]) + "H", "0x09", "EECon2",
+                                String.valueOf(DecodeDraft.ram[1][9]) + "H" },
+                        { "0x0A", "PCLATH", String.valueOf(DecodeDraft.ram[0][10]) + "H", "0x0A", "PCLATCH",
+                                String.valueOf(DecodeDraft.ram[0][10]) + "H" },
+                        { "0x0B", "INTCON", String.valueOf(DecodeDraft.ram[0][11]) + "H", "0x0B", "INTCON",
+                                String.valueOf(DecodeDraft.ram[0][11]) + "H" }, },
                 new String[] { "Adresse", "Bez", "Werte Binär", "Adresse", "Bez", "Werte" }));
         scrollPane_6.setViewportView(sfr_table);
 
@@ -497,7 +494,7 @@ public class PICGUI extends JFrame {
         JButton btnRun = new JButton("Run");
         btnRun.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DecodeDraft.resetValue = true;
+
                 DecodeDraft.resetValue = false;
 
                 thread = new Thread(() -> {
@@ -505,11 +502,12 @@ public class PICGUI extends JFrame {
                     while (!DecodeDraft.resetValue) {
                         run_N_Step();
                         if (isBreakpointSet(DecodeDraft.pC_Next)) {
+                            runCounter=0;
                             DecodeDraft.resetValue = true;
                             break;
                         }
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep( 400/slider.getValue());
                         } catch (InterruptedException e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
@@ -518,9 +516,11 @@ public class PICGUI extends JFrame {
                     }
 
                 });
+                if (runCounter != 1) {
+                    thread.start();
+                    runCounter++;
 
-                thread.start();
-
+                }
                 // WErte im Stack Speichern
 
                 // System.out.println(decoder.getStack()[0]); -> 0
@@ -541,7 +541,7 @@ public class PICGUI extends JFrame {
         btnStop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DecodeDraft.resetValue = true;
-
+                runCounter = 0;
             }
         });
         btnStop.setBounds(205, 61, 89, 23);
@@ -551,7 +551,7 @@ public class PICGUI extends JFrame {
         btnStep.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DecodeDraft.resetValue = true;
-
+                runCounter = 0;
                 thread2 = new Thread(() -> {
 
                     run_N_Step();
@@ -619,7 +619,7 @@ public class PICGUI extends JFrame {
     // input Dateipfad der LST Datei durch den FileBtn in der GUI
     private void displayDataInTable(String filePath) {
         // readDataFromFile(filePath);
-
+        newFileReset();
         parse(filePath); // displays the lst file in the table and extracts commands
         console_area.append(filePath);// eingelesene Datei in Console Ausgeben
         System.out.println("Filepath in the display to table method: " + filePath);
@@ -634,8 +634,21 @@ public class PICGUI extends JFrame {
 
     public void run_N_Step() {
         table_1.clearSelection();
+        sfr_table.clearSelection();
+        gpr_table.clearSelection();
         int pcCheck = DecodeDraft.pC_Next;
-        DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
+        try {
+            DecodeDraft.decode(DecodeDraft.execute.get(DecodeDraft.pC_Next));
+        } catch (NullPointerException e) {
+            DecodeDraft.resetValue = true;
+            JOptionPane.showMessageDialog(null, "Du musst erster ein Programm laden!!!", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+
+        } catch (IndexOutOfBoundsException e) {
+            JOptionPane.showMessageDialog(null, "Drücke Reset und starte noch einmal", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            fileChooser.setSelectedFile(new File(filePath));
+        }
         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]), 0, 1);
         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]), 1, 1);
         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[2]), 2, 1);
@@ -646,19 +659,66 @@ public class PICGUI extends JFrame {
         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[7]), 7, 1);
 
         lbw.setText(Integer.toHexString(DecodeDraft.wRegister).toUpperCase() + "H");
+        if (DecodeDraft.wRegister != 0) {
+            lbw.setForeground(Color.BLUE);
+        } else {
+            lbw.setForeground(Color.BLACK);
+        }
+
         lbpc.setText(String.valueOf(DecodeDraft.pC_Next));
-        lbpcl.setText(String.valueOf(DecodeDraft.pC_Next));
+        if (DecodeDraft.pC_Next != 0) {
+            lbpc.setForeground(Color.BLUE);
+        } else {
+            lbpc.setForeground(Color.BLACK);
+        }
+
+        // lbpcl.setText(String.valueOf(DecodeDraft.pC_Next));
+
         // lbpclath.setText(String.valueOf(DecodeDraft.));
         lbc.setText(String.valueOf(DecodeDraft.carrybit));
-        lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
-        lbz.setText(String.valueOf(DecodeDraft.zerobit));
-
-        for (int j = 0; j < 12; j++) {
-            sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j, 2);
-            sfr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[1][j]).toUpperCase() + "H", j, 5);
+        if (DecodeDraft.carrybit != 0) {
+            lbc.setForeground(Color.BLUE);
+        } else {
+            lbc.setForeground(Color.BLACK);
         }
-        for (int j = 12; j < 67; j++) {
-            gpr_table.setValueAt(Integer.toHexString(DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 11, 1);
+
+        lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
+        if (DecodeDraft.digitcarrybit != 0) {
+            lbdc.setForeground(Color.BLUE);
+        } else {
+            lbdc.setForeground(Color.BLACK);
+        }
+
+        lbz.setText(String.valueOf(DecodeDraft.zerobit));
+        if (DecodeDraft.zerobit != 0) {
+            lbz.setForeground(Color.BLUE);
+        } else {
+            lbz.setForeground(Color.BLACK);
+        }
+        for (int j = 0; j < 12; j++) {
+
+            sfr_table.setValueAt(String.format("%02X", DecodeDraft.ram[0][j]).toUpperCase() + "H", j, 2);
+            if (DecodeDraft.ram[0][j] != 0) {
+                sfr_table.addRowSelectionInterval(j, j);
+
+            }
+            sfr_table.setValueAt(String.format("%02X", DecodeDraft.ram[1][j]).toUpperCase() + "H", j, 5);
+            if (DecodeDraft.ram[1][j] != 0) {
+                // gpr_table.addRowSelectionInterval(j, j);
+                sfr_table.addRowSelectionInterval(j, j);
+            }
+        }
+        for (int j = 12; j < DecodeDraft.ram[0].length - 12; j++) {
+            gpr_table.setValueAt(String.format("%02X", DecodeDraft.ram[0][j]).toUpperCase() + "H", j - 12, 1);
+            if (DecodeDraft.ram[0][j] != 0) {
+                // gpr_table.addRowSelectionInterval(j, j);
+                gpr_table.addRowSelectionInterval(j - 12, j - 12);
+            }
+            gpr_table.setValueAt(String.format("%02X", DecodeDraft.ram[1][j]).toUpperCase() + "H", j - 12, 3);
+            if (DecodeDraft.ram[1][j] != 0) {
+                // gpr_table.addRowSelectionInterval(j, j);
+                gpr_table.addRowSelectionInterval(j - 12, j - 12);
+            }
         }
         row += DecodeDraft.pC_Next - pcCheck;
         row = rightRow(DecodeDraft.pC_Next);
@@ -668,7 +728,6 @@ public class PICGUI extends JFrame {
             table_1.addRowSelectionInterval(row, row);
 
         }
-        table_1.setBackground(Color.white);
 
         lbl_laufzeit.setText(String.valueOf(String.format("%.02f", DecodeDraft.runtime)));
     }
@@ -676,8 +735,11 @@ public class PICGUI extends JFrame {
     public void reset() {
         DecodeDraft.resetValue = true;
         table_1.clearSelection();
+        sfr_table.clearSelection();
+        gpr_table.clearSelection();
         row = firstRow;
 
+        runCounter = 0;
         DecodeDraft.carrybit = 0;
         DecodeDraft.digitcarrybit = 0;
         DecodeDraft.pC_Current = 0;
@@ -723,8 +785,16 @@ public class PICGUI extends JFrame {
         lbc.setText(String.valueOf(DecodeDraft.carrybit));
         lbdc.setText(String.valueOf(DecodeDraft.digitcarrybit));
         lbz.setText(String.valueOf(DecodeDraft.zerobit));
-        table_1.addRowSelectionInterval(row, row);
-        table_1.scrollRectToVisible(table_1.getCellRect(row, 0, true));
+        try {
+            table_1.addRowSelectionInterval(row, row);
+            table_1.scrollRectToVisible(table_1.getCellRect(row, 0, true));
+        } catch (IllegalArgumentException e) {
+            DecodeDraft.resetValue = true;
+            JOptionPane.showMessageDialog(null, "Du musst erster ein Programm laden!!!", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+
+        }
+
     }
 
     public void newFileReset() {
@@ -734,7 +804,7 @@ public class PICGUI extends JFrame {
         befehle.clear();
         table_1.clearSelection();
         row = firstRow;
-
+        runCounter = 0;
         DecodeDraft.carrybit = 0;
         DecodeDraft.digitcarrybit = 0;
         DecodeDraft.pC_Current = 0;
@@ -753,8 +823,8 @@ public class PICGUI extends JFrame {
         DecodeDraft.runtime = 0;
         DecodeDraft.endOfProgrammCheck = 0;
         lbl_laufzeit.setText("0");
-        console_area.setText("0");
-        state_area.setText("0");
+        console_area.setText("");
+        state_area.setText("");
 
         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[0]) + "H", 0, 1);
         stack_table.setValueAt(String.valueOf(DecodeDraft.stack[1]) + "H", 1, 1);
@@ -769,8 +839,13 @@ public class PICGUI extends JFrame {
             sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j, 2);
             sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]) + "H", j, 5);
         }
+        for (int j = 0; j < 12; j++) {
+            sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j, 2);
+            sfr_table.setValueAt(String.valueOf(DecodeDraft.ram[1][j]) + "H", j, 5);
+        }
         for (int j = 12; j < 68; j++) {
             gpr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j - 11, 1);
+            gpr_table.setValueAt(String.valueOf(DecodeDraft.ram[0][j]) + "H", j - 11, 3);
         }
 
         lbw.setText(String.valueOf(DecodeDraft.wRegister) + "H");
@@ -817,39 +892,39 @@ public class PICGUI extends JFrame {
         // Wieso codeLines
         List<String> codeLines = new ArrayList<>();
         // List<String> befehle = new ArrayList<>();
+        Font newFont = new Font("Bold", Font.BOLD, 10);
+        table_1.setFont(newFont);
 
         try (BufferedReader br = new BufferedReader(new FileReader(lstFile))) {
             String currentLine;
-            String pc="";
-            String hexCode="";
-            String progRow="";
-            String instr="";
-            
+            String pc = "";
+            String hexCode = "";
+            String progRow = "";
+            String instr = "";
+
             while ((currentLine = br.readLine()) != null) {
-               
+
                 if (currentLine.substring(0, 4).length() > 0) {
                     pc = currentLine.substring(0, 4);
-                } 
+
+                }
                 if (currentLine.substring(5, 9).length() > 0) {
                     hexCode = currentLine.substring(5, 9);
                 }
-                
+
                 if (currentLine.substring(20, 25).length() > 0) {
                     progRow = currentLine.substring(10, 25).trim();
-                } 
-               
-                if (currentLine.substring(25, currentLine.length() ).length() > 0) {
-                    instr =currentLine.substring(25,  currentLine.length() );
-                } 
-               
-                
+                }
+
+                if (currentLine.substring(25, currentLine.length()).length() > 0) {
+                    instr = currentLine.substring(25, currentLine.length());
+                }
+
                 codeLines.add(currentLine);
                 befehle.add(currentLine.substring(5, 9));
                 // System.out.println("Current linr:" + currentLine.substring(5, 9));
 
-                model.addRow(new Object[] { Boolean.FALSE,pc, hexCode,
-                        progRow,
-                        instr});
+                model.addRow(new Object[] { Boolean.FALSE, pc, hexCode, progRow, instr });
 
                 // TODO: System.out.println(sCurrentLine);
             }
@@ -987,10 +1062,17 @@ public class PICGUI extends JFrame {
         for (int i = 0; i < table_1.getRowCount(); i++) {
             Boolean breakpoint = (Boolean) table_1.getValueAt(i, 0);
             String pcValue = (String) table_1.getValueAt(i, 1).toString().substring(0, 4);
-
-            if (breakpoint != null && breakpoint && pcValue != null && Integer.parseInt(pcValue) == line) {
+try {
+            if (breakpoint != null && breakpoint && pcValue != null && Integer.parseInt(pcValue, 16) == line) {
                 return true;
             }
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(null, "Wähle ein Breakpoint bei dem sich auch ein Befehl befindet! ", "Error",
+            JOptionPane.ERROR_MESSAGE);
+    table_1.setValueAt(false, i, 0);
+    reset();
+    return false;
+}
         }
         return false;
     }
